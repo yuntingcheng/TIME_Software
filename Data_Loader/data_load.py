@@ -1,0 +1,3 @@
+# i'll add stuff in here eventually...
+# meant to have what's in netcdf.py right now
+# let's the user choose which data to pull out of which files
