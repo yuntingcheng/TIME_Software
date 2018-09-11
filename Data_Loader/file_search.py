@@ -17,7 +17,7 @@ def main():
     action = input("a : name , b : date \n")
 
     if action == 'a':
-        name_search(files2,action,keep)
+        name_search(files2,action)
     elif action == 'b':
         date_search(files,action,keep)
     else :
@@ -27,7 +27,7 @@ def name_search(files2,action):
     action4 = input('Enter name to search: \n')
     if action == 'a':
         if os.path.exists(dir):
-            files = [dir + x for x in os.listdir(dir) if (x.startswith(action4) and x.endswith(".nc"))]
+            files = [dir + x for x in os.listdir(dir) if (re.search(action4,x) and x.endswith(".nc"))]
             print('\n'.join([s.replace(dir,'') for s in files]))
             print('Do you still want to search by time?')
             action5 = input('y : yes , n : no \n')
@@ -79,7 +79,7 @@ def name_search(files2,action):
 def date_search(files, action, keep):
     if action == 'b' :
         if os.path.exists(dir):
-            files = [dir + x for x in os.listdir(dir) if (x.endswith(".nc") and x.startswith("raw"))]
+            files = [dir + x for x in os.listdir(dir) if (x.endswith(".nc")]
             newest = max(files , key = os.path.getctime)
             oldest = min(files, key = os.path.getctime)
             print("Available Files:",'\n', "Newest: %s" %(newest.replace(dir,'')),'\n', "Oldest: %s" %(oldest.replace(dir,'')))
