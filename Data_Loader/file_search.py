@@ -79,7 +79,7 @@ def name_search(files2,action):
 def date_search(files, action, keep):
     if action == 'b' :
         if os.path.exists(dir):
-            files = [dir + x for x in os.listdir(dir) if (x.endswith(".nc")]
+            files = [dir + x for x in os.listdir(dir) if x.endswith(".nc")]
             newest = max(files , key = os.path.getctime)
             oldest = min(files, key = os.path.getctime)
             print("Available Files:",'\n', "Newest: %s" %(newest.replace(dir,'')),'\n', "Oldest: %s" %(oldest.replace(dir,'')))
