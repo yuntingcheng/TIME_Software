@@ -22,7 +22,7 @@ def netcdfdata(rc):
         #if mce_file:
             #print('NETCDF IS WORKING')
             #print(len(os.listdir("/data/cryo/current_data")) - 2 - n_files)
-        mcea = subprocess.call(['ssh -T time@time-mce-0.caltech.edu python /home/time/time-software/sftp/mce1_sftp.py %s %s' % (mcea, n_files)], shell=True)
+        mcea = subprocess.call(['ssh -T time@time-mce-1.caltech.edu python /home/time/time-software/sftp/mce1_sftp.py %s %s' % (mcea, n_files)], shell=True)
         mce_file = os.path.exists('/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a+1))
         print('/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a+1))
         if mce_file:
