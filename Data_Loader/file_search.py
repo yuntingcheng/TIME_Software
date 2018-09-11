@@ -1,24 +1,25 @@
 import netCDF4
 import sys, os, re
+import data_load as dl
 
 # ------------- NetCDF Directory ----------------
 dir = '/Users/vlb9398/Dropbox/NetCDF_Test/'
 sys.path.append(dir)
 # -----------------------------------------------
 
-keep = []
-files2 = []
-files = []
-
 # ===================================================================================================
 def main():
+    keep = []
+    files2 = []
+    files = []
+
     print("Choose name search or date search: ")
     action = input("a : name , b : date \n")
 
     if action == 'a':
-        name_search(files2,action)
+        name_search(files2,action,keep)
     elif action == 'b':
-        date_search(files,action)
+        date_search(files,action,keep)
     else :
         print("I'm sorry... I didn't understand. Please try again.")
 # ====================================================================================================
@@ -32,9 +33,21 @@ def name_search(files2,action):
             action5 = input('y : yes , n : no \n')
 
             if action5 == 'y':
-                date_search(files,action)
+                date_search(files,action,keep)
             elif action5 == 'n':
-                pass
+                print("Do you want to read one or all files returned? \n")
+                action10 = input('a : one , b: all \n')
+                if action10 == 'a':
+                    action11 = input('Which file to read? \n')
+                    ncdf = [x for x in files if re.search(action11,x)]
+                    dl.file_keys(ncdf,num='one')
+
+                elif action10 == 'b':
+                    dl.file_keys(files,num='all')
+
+                else :
+                    print("No name match")
+
             else :
                 print("I'm sorry... I didn't understand. Please try again.")
                 pass
@@ -46,10 +59,24 @@ def name_search(files2,action):
         keep = [x for x in files2 if re.search(action4,x)]
         print('\n'.join([s.replace(dir,'') for s in keep]))
 
+        print("Do you want to read one or all files returned? \n")
+        action10 = input('a : one , b: all \n')
+        if action10 == 'a':
+            action11 = input('Which file to read? \n')
+            ncdf = [x for x in keep if re.search(action11,x)]
+            dl.file_keys(ncdf,num='one')
+
+        elif action10 == 'b':
+            dl.file_keys(keep,num='all')
+
+        else :
+            print("No name match")
+
+
     else :
         print('uh-oh...something went wrong...')
 # ======================================================================================================
-def date_search(files, action):
+def date_search(files, action, keep):
     if action == 'b' :
         if os.path.exists(dir):
             files = [dir + x for x in os.listdir(dir) if (x.endswith(".nc") and x.startswith("raw"))]
@@ -68,15 +95,27 @@ def date_search(files, action):
                 else :
                     print("No files found in that range.")
                     pass
+            keep = sorted(keep, key = os.path.getctime)
+            print('\n'.join([s.replace(dir,'') for s in keep]))
 
-            print(keep)
             print("Do you still want to search by name?")
             action4 = input('y : yes , n : no \n')
 
             if action4 == 'y':
                 name_search(keep,action)
             elif action4 == 'n':
-                pass
+                print("Do you want to read one or all files returned? \n")
+                action8 = input('a : one , b: all \n')
+                if action8 == 'a':
+                    action9 = input('Which file to read? \n')
+                    ncdf = [x for x in keep if re.search(action9,x)]
+                    dl.file_keys(ncdf,num='one')
+
+                elif action8 == 'b':
+                    dl.file_keys(keep,num='all')
+
+                else :
+                    print("No name match")
             else :
                 print("I'm sorry... I didn't understand. Please try again.")
                 pass
@@ -94,7 +133,21 @@ def date_search(files, action):
                 print("No files found in that range.")
                 pass
 
+        keep = sorted(keep, key = os.path.getctime)
         print('\n'.join([s.replace(dir,'') for s in keep]))
+
+        print("Do you want to read one or all files returned? \n")
+        action8 = input('a : one , b: all \n')
+        if action8 == 'a':
+            action9 = input('Which file to read? \n')
+            ncdf = [x for x in keep if re.search(action9,x)]
+            dl.file_keys(ncdf,num='one')
+
+        elif action8 == 'b':
+            dl.file_keys(keep,num='all')
+
+        else :
+            print("No name match")
     else :
         print("Action not recognized")
 # =======================================================================================================
