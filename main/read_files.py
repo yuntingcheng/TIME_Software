@@ -42,6 +42,9 @@ def netcdfdata(rc):
 def readdata(f, mce_file_name, mce, head, n, a, filestarttime, rc):
     h = f.Read(row_col=True, unfilter='DC').data
     d = np.empty([h.shape[0],h.shape[1]],dtype=float)
+    print("++++++++ H Array ++++++++")
+    print(h[0][0][:])
+    print("+++++++++++++++++++++++++")
     for b in range(h.shape[0]):
         for c in range(h.shape[1]):
             d[b][c] = (np.std(h[b][c][:],dtype=float))
