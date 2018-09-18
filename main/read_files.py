@@ -9,19 +9,12 @@ import datetime
 
 def netcdfdata(rc):
     print('HELLO!')
-    #n_files = len(os.listdir("/data/cryo/current_data"))
     a = 0
     mcea = 0
     mce = 1
-    n = 0
     n_files = 8
     filestarttime = 0
     while True:
-        #mce_file_name = "/data/cryo/current_data/temp.%0.3i" %(a)
-        #mce_file = os.path.exists("/data/cryo/current_data/temp.%0.3i" %(a+1)) #wait to read new file until old file is complete
-        #if mce_file:
-            #print('NETCDF IS WORKING')
-            #print(len(os.listdir("/data/cryo/current_data")) - 2 - n_files)
         mcea = subprocess.call(['ssh -T time@time-mce-1.caltech.edu python /home/time/time-software/sftp/mce1_sftp.py %s %s' % (mcea, n_files)], shell=True)
         mce_file = os.path.exists('/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a+1))
         print('/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a+1))
@@ -33,13 +26,10 @@ def netcdfdata(rc):
                 a = a + 1
                 f = mce_data.SmallMCEFile(mce_file_name)
                 header = read_header(f)
-                mce, n, filestarttime = readdata(f, mce_file_name, mce, header, n, a, filestarttime, rc)
+                mce, filestarttime = readdata(f, mce_file_name, mce, header, a, filestarttime, rc)
                 mce_file = os.path.exists('/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a+1))
-            #else:
-            #    pass
 
-
-def readdata(f, mce_file_name, mce, head, n, a, filestarttime, rc):
+def readdata(f, mce_file_name, mce, head, a, filestarttime, rc):
     h = f.Read(row_col=True, unfilter='DC').data
     d = np.empty([h.shape[0],h.shape[1]],dtype=float)
     print("++++++++ H Array ++++++++")
@@ -57,24 +47,25 @@ def readdata(f, mce_file_name, mce, head, n, a, filestarttime, rc):
     if a == 1:
         filestarttime = datetime.datetime.utcnow()
         filestarttime = filestarttime.isoformat()
-        mce = nc.new_file(n, h.shape, head, filestarttime)
+        mce = nc.new_file(h.shape, head, filestarttime)
     elif os.stat(tempfiledir + "/mce1_%s.nc" % (filestarttime)).st_size < 20 * 10**6: # of bytes here
-        if rc == 's' :
-            nc.data_all(h,d,n,a,head)
-        else :
-            nc.data(h,d,n,a,head)
+        if os.path.exists('/home/time/Desktop/time-data/netcdffiles/mce1_%s.nc' %(filestarttime)) :
+            if rc == 's' :
+                nc.data_all(h,d,a,head)
+            else :
+                nc.data(h,d,a,head)
     else:
-        n = n + 1
         mce.close()
         print('----------New File----------')
         filestarttime = datetime.datetime.utcnow()
         filestarttime = filestarttime.isoformat()
-        mce = nc.new_file(n, h.shape, head, filestarttime)
-        if rc == 's' :
-            nc.data_all(h,d,n,a,head)
-        else :
-            nc.data(h,d,n,a,head)
-    return mce, n, filestarttime
+        mce = nc.new_file(h.shape, head, filestarttime)
+        if os.path.exists('/home/time/Desktop/time-data/netcdffiles/mce1_%s.nc' %(filestarttime)) :
+            if rc == 's' :
+                nc.data_all(h,d,a,head)
+            else :
+                nc.data(h,d,a,head)
+    return mce, filestarttime
 
 
 def read_header(f):
@@ -96,10 +87,10 @@ def read_header(f):
     keys = np.asarray(keys,dtype=object)
     values = np.asarray(values,dtype=object)
     head = np.array((keys,values)).T
-    print("+++++++++ MCE HEADER +++++++++")
-    print(head)
-    print("++++++++++++++++++++++++++++++")
-    return head
+    # print("+++++++++ MCE HEADER +++++++++")
+    # print(head)
+    # print("++++++++++++++++++++++++++++++")
+    # return head
 
 if __name__ == '__main__':
     netcdfdata(sys.argv[1])

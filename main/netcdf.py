@@ -9,7 +9,7 @@ from netCDF4 import num2date, date2num
 #from multipagegui import parameters
 
 
-def new_file(n, h_size, head, filestarttime):
+def new_file(h_size, head, filestarttime):
     tempfiledir = os.path.expanduser('/home/time/Desktop/time-data/netcdffiles')
     mce = Dataset(tempfiledir + "/mce1_%s.nc" %(filestarttime),"w",format="NETCDF4")
 
@@ -79,13 +79,13 @@ def new_file(n, h_size, head, filestarttime):
 
     return mce
 
-def data_all(h,d,n,a,head):
+def data_all(h,d,a,head):
     Time[a] = str(now.datetime.utcnow())
     #Rms_Noise_All[a,:,:] = d
     Raw_Data_All[a,:,:,:] = h
     Header[a,:,:] = head
 
-def data(h,d,n,a,head):
+def data(h,d,a,head):
     Time[a] = str(now.datetime.utcnow())
     #Rms_Noise[a,:,:] = d
     Raw_Data[a,:,:,:] = h
