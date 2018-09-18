@@ -11,7 +11,7 @@ from netCDF4 import num2date, date2num
 
 def new_file(h_size, head, filestarttime):
     tempfiledir = os.path.expanduser('/home/time/Desktop/time-data/netcdffiles')
-    mce = Dataset(tempfiledir + "/mce1_%s.nc" %(filestarttime),"w",format="NETCDF4")
+    mce = MFDataset(tempfiledir + "/mce1_%s.nc" %(filestarttime),"w",format="NETCDF4")
 
     # create the gui parameters group
     guiparams = mce.createGroup('guiparams')
@@ -79,14 +79,12 @@ def new_file(h_size, head, filestarttime):
 
     return mce
 
-def data_all(h,d,a,head):
+def data_all(h,a,head):
     Time[a] = str(now.datetime.utcnow())
-    #Rms_Noise_All[a,:,:] = d
     Raw_Data_All[a,:,:,:] = h
     Header[a,:,:] = head
 
-def data(h,d,a,head):
+def data(h,a,head):
     Time[a] = str(now.datetime.utcnow())
-    #Rms_Noise[a,:,:] = d
     Raw_Data[a,:,:,:] = h
     Header[a,:,:] = head

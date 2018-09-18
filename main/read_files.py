@@ -26,18 +26,18 @@ def netcdfdata(rc):
                 a = a + 1
                 f = mce_data.SmallMCEFile(mce_file_name)
                 header = read_header(f)
-                mce, filestarttime = readdata(f, mce_file_name, mce, header, a, filestarttime, rc)
+                mce, filestarttime = readdata(f, mce, header, a, filestarttime, rc)
                 mce_file = os.path.exists('/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a+1))
 
-def readdata(f, mce_file_name, mce, head, a, filestarttime, rc):
+def readdata(f, mce, head, a, filestarttime, rc):
     h = f.Read(row_col=True, unfilter='DC').data
-    d = np.empty([h.shape[0],h.shape[1]],dtype=float)
-    print("++++++++ H Array ++++++++")
-    print(h[0][0][:])
-    print("+++++++++++++++++++++++++")
-    for b in range(h.shape[0]):
-        for c in range(h.shape[1]):
-            d[b][c] = (np.std(h[b][c][:],dtype=float))
+    # d = np.empty([h.shape[0],h.shape[1]],dtype=float)
+    # print("++++++++ H Array ++++++++")
+    # print(h[0][0][:])
+    # print("+++++++++++++++++++++++++")
+    # for b in range(h.shape[0]):
+    #     for c in range(h.shape[1]):
+    #         d[b][c] = (np.std(h[b][c][:],dtype=float))
     #print h.shape
 
     old_mce_file_name = '/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a - 1)
@@ -51,9 +51,9 @@ def readdata(f, mce_file_name, mce, head, a, filestarttime, rc):
     elif os.stat(tempfiledir + "/mce1_%s.nc" % (filestarttime)).st_size < 20 * 10**6: # of bytes here
         if os.path.exists('/home/time/Desktop/time-data/netcdffiles/mce1_%s.nc' %(filestarttime)) :
             if rc == 's' :
-                nc.data_all(h,d,a,head)
+                nc.data_all(h,a,head)
             else :
-                nc.data(h,d,a,head)
+                nc.data(h,a,head)
     else:
         mce.close()
         print('----------New File----------')
@@ -62,11 +62,10 @@ def readdata(f, mce_file_name, mce, head, a, filestarttime, rc):
         mce = nc.new_file(h.shape, head, filestarttime)
         if os.path.exists('/home/time/Desktop/time-data/netcdffiles/mce1_%s.nc' %(filestarttime)) :
             if rc == 's' :
-                nc.data_all(h,d,a,head)
+                nc.data_all(h,a,head)
             else :
-                nc.data(h,d,a,head)
+                nc.data(h,a,head)
     return mce, filestarttime
-
 
 def read_header(f):
     keys = []
