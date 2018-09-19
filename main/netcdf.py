@@ -35,27 +35,27 @@ def new_file(h_size, head, filestarttime):
 
 
     # creating variables --------------------------------------------------------------------------------
-    Observer = createVariable("observer","S3","obs")
-    Datetime = createVariable('datetime', 'S26','date')
-    Frames = createVariable('frames', 'S8','f')
-    Datamode = createVariable('datamode','S2','mode')
-    Detector = createVariable('detector','f8','det')
-    Rc = createVariable('rc','S1','r') # can either use rc name or integer used by gui
+    Observer = mce.createVariable("observer","S3","obs")
+    Datetime = mce.createVariable('datetime', 'S26','date')
+    Frames = mce.createVariable('frames', 'S8','f')
+    Datamode = mce.createVariable('datamode','S2','mode')
+    Detector = mce.createVariable('detector','f8','det')
+    Rc = mce.createVariable('rc','S1','r') # can either use rc name or integer used by gui
     global Time
-    Time = createVariable('time','S26','t')
+    Time = mce.createVariable('time','S26','t')
 
     global Rms_Noise_All
     global Rms_Noise
-    Rms_Noise_All = createVariable('rms_noise_all','f8',('t','rms_rows','rms_cols_all'))
-    Rms_Noise = createVariable('rms_noise','f8',('t','rms_rows','rms_cols'))
+    Rms_Noise_All = mce.createVariable('rms_noise_all','f8',('t','rms_rows','rms_cols_all'))
+    Rms_Noise = mce.createVariable('rms_noise','f8',('t','rms_rows','rms_cols'))
 
     global Raw_Data_All
     global Raw_Data
-    Raw_Data = createVariable('raw_data','f8',('t','raw_rows','raw_cols','raw_num'))
-    Raw_Data_All = createVariable('raw_data_all','f8',('t','raw_rows','raw_cols_all','raw_num'))
+    Raw_Data = mce.createVariable('raw_data','f8',('t','raw_rows','raw_cols','raw_num'))
+    Raw_Data_All = mce.createVariable('raw_data_all','f8',('t','raw_rows','raw_cols_all','raw_num'))
 
     global Header
-    Header = createVariable('header','S3',('t','v','k'))
+    Header = mce.createVariable('header','S3',('t','v','k'))
 
     parafilename = ('tempfiles/tempparameters.txt')
     parafile = open(parafilename, 'r')
