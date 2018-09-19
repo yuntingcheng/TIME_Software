@@ -8,7 +8,7 @@ import numpy as np
 
 tempfiledir = '/home/time/Desktop/time-data/netcdffiles'
 def new_file(h_size, head, filestarttime):
-    mce = Dataset(tempfiledir + "/mce1_%s.nc" %(filestarttime),"w",format="NETCDF4_CLASSIC")
+    mce = nc.Dataset(tempfiledir + "/mce1_%s.nc" %(filestarttime),"w",format="NETCDF4_CLASSIC")
 
     # create the gui parameters group
     # guiparams = mce.createGroup('guiparams')
@@ -64,14 +64,14 @@ def new_file(h_size, head, filestarttime):
     return mce
 
 def data_all(h,a,head,filestarttime):
-    mce = Dataset(tempfiledir + "/mce1_%s.nc" %(filestarttime),"a")
+    mce = nc.Dataset(tempfiledir + "/mce1_%s.nc" %(filestarttime),"a")
     Time[a] = nc.stringtochar(np.array[str(now.datetime.utcnow())],'S26')
     Raw_Data_All[a,:,:,:] = h
     #Header[a,:,:] = head
     mce.close()
 
 def data(h,a,head,filestarttime):
-    mce = Dataset(tempfiledir + "/mce1_%s.nc" %(filestarttime),"a")
+    mce = nc.Dataset(tempfiledir + "/mce1_%s.nc" %(filestarttime),"a")
     Time[a] = nc.stringtochar(np.array[str(now.datetime.utcnow())],'S26')
     Raw_Data[a,:,:,:] = h
     #Header[a,:,:] = head
