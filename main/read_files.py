@@ -11,7 +11,8 @@ import time
 def netcdfdata(rc):
     print '------ Data Parsing ------'
     a = 0
-    filestarttime = 0
+    filestarttime = datetime.datetime.utcnow()
+    filestarttime = filestarttime.isoformat()
     dir = '/home/time/Desktop/time-data/mce1/'
     mce = 0
     subprocess.call(['ssh -T time@time-mce-1.caltech.edu python /home/time/time-software/sftp/mce1_sftp.py'], shell=True)
@@ -45,12 +46,9 @@ def netcdfdata(rc):
         sys.exit()
 
 # ===========================================================================================================================
-def readdata(f,head,filestarttime, rc, mce_file,a):
+def readdata(f,head,filestarttime,rc, mce_file,a):
     h = f.Read(row_col=True, unfilter='DC').data
     # d = np.empty([h.shape[0],h.shape[1]],dtype=float)
-    # print("++++++++ H Array ++++++++")
-    # print(h[0][0][:])
-    # print("+++++++++++++++++++++++++")
     # for b in range(h.shape[0]):
     #     for c in range(h.shape[1]):
     #         d[b][c] = (np.std(h[b][c][:],dtype=float))
@@ -59,17 +57,23 @@ def readdata(f,head,filestarttime, rc, mce_file,a):
     #old_mce_file_name = '/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a - 1)
     subprocess.Popen(['rm %s' % (mce_file)], shell=True)
 
-    netcdfdir = os.path.expanduser('/home/time/Desktop/time-data/netcdffiles')
+    netcdfdir = '/home/time/Desktop/time-data/netcdffiles'
     if a == 0:
         filestarttime = datetime.datetime.utcnow()
         filestarttime = filestarttime.isoformat()
         mce = nc.new_file(h.shape, head, filestarttime)
+        if rc == 's' :
+            nc.data_all(h,a,head)
+        else :
+            nc.data(h,a,head)
+
     elif os.stat(netcdfdir + "/mce1_%s.nc" % (filestarttime)).st_size < 20 * 10**6: # of bytes here
         if os.path.exists('/home/time/Desktop/time-data/netcdffiles/mce1_%s.nc' %(filestarttime)) :
             if rc == 's' :
                 nc.data_all(h,a,head)
             else :
                 nc.data(h,a,head)
+
     else:
         mce.close()
         print '----------New File----------'
@@ -101,9 +105,6 @@ def read_header(f):
     keys = np.asarray(keys,dtype=object)
     values = np.asarray(values,dtype=object)
     head = np.array((keys,values)).T
-    # print("+++++++++ MCE HEADER +++++++++")
-    # print(head)
-    # print("++++++++++++++++++++++++++++++")
     return head
 
 if __name__ == '__main__':
