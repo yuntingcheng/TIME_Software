@@ -1,5 +1,4 @@
-from netCDF4 import Dataset
-from netCDF4 import MFDataset
+import netCDF4 as nc
 import os
 import sys
 #import takedata_test as td
