@@ -12,7 +12,7 @@ def netcdfdata(rc):
     print('------ Data Parsing ------')
     a = 0
     filestarttime = 0
-    dir = '/home/time/Desktop/time-data/mce1'
+    dir = '/home/time/Desktop/time-data/mce1/'
     subprocess.call(['ssh -T time@time-mce-1.caltech.edu python /home/time/time-software/sftp/mce1_sftp.py'], shell=True)
     time.sleep(0.5)
     while True:

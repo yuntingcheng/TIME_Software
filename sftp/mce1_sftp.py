@@ -5,7 +5,7 @@ import shutil
 import sys
 
 def main():
-    dir = '/data/cryo/current_data'
+    dir = '/data/cryo/current_data/'
     print('------- Starting Data Transfer -------')
     a = 0
     while True:
@@ -23,7 +23,7 @@ def main():
             else :
                 print("File Doesn't Exist (2)")
         else :
-            print("File Doesn't Exist (1)")
+            pass
     else :
         sys.exit()
 
