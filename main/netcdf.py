@@ -83,10 +83,8 @@ def data_all(h,a,head):
     Time[a] = str(now.datetime.utcnow())
     Raw_Data_All[a,:,:,:] = h
     Header[a,:,:] = head
-    print(Raw_Data_All.shape)
-    print(Header.shape)
+
 def data(h,a,head):
     Time[a] = str(now.datetime.utcnow())
     Raw_Data[a,:,:,:] = h
     Header[a,:,:] = head
-    print(Raw_Data.shape)
