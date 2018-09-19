@@ -8,7 +8,7 @@ from netCDF4 import num2date, date2num
 
 
 tempfiledir = '/home/time/Desktop/time-data/netcdffiles'
-def new_file(h_size, head, filestarttime, mce):
+def new_file(h_size, head, filestarttime):
     mce = Dataset(tempfiledir + "/mce1_%s.nc" %(filestarttime),"w",format="NETCDF4_CLASSIC")
 
     # create the gui parameters group
