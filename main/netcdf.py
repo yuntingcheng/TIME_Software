@@ -34,14 +34,14 @@ def new_file(h_size, head, filestarttime):
 
 
     # creating variables --------------------------------------------------------------------------------
-    Observer = mce.createVariable("observer","S1","obs")
-    Datetime = mce.createVariable('datetime', 'S1','date')
-    Frames = mce.createVariable('frames', 'S1','f')
-    Datamode = mce.createVariable('datamode','S1','mode')
+    Observer = mce.createVariable("observer","S1",("obs"))
+    Datetime = mce.createVariable('datetime', 'S1',('date'))
+    Frames = mce.createVariable('frames', 'S1',('f'))
+    Datamode = mce.createVariable('datamode','S1',('mode'))
     Detector = mce.createVariable('detector','f8','det')
-    Rc = mce.createVariable('rc','S1','r') # can either use rc name or integer used by gui
+    Rc = mce.createVariable('rc','S1',('r')) # can either use rc name or integer used by gui
     global Time
-    Time = mce.createVariable('time','S1','t')
+    Time = mce.createVariable('time','S1',('t'))
 
     global Raw_Data_All
     global Raw_Data
