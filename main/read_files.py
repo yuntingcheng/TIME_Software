@@ -48,9 +48,9 @@ def readdata(f,head,filestarttime,rc,mce_file,a,mce):
         mce = nc.new_file(h.shape, head, filestarttime, mce)
 
     if rc == 's' :
-        nc.data_all(h,a,head)
+        nc.data_all(h,a,head,filestarttime)
     else :
-        nc.data(h,a,head)
+        nc.data(h,a,head,filestarttime)
 
     return filestarttime, mce
 # =========================================================================================================
