@@ -21,7 +21,7 @@ def netcdfdata(rc):
         mce_file = min(files, key = os.path.getctime)
         f = mce_data.SmallMCEFile(mce_file)
         head = read_header(f)
-        readdata(f,head,filestarttime,rc,mce_file,a)
+        filestarttime = readdata(f,head,filestarttime,rc,mce_file,a)
         a = a + 1
         print 'File Read:' , mce_file.replace(dir,'')
 #-----------------------------------------------------------------------------------------------
@@ -62,11 +62,10 @@ def readdata(f,head,filestarttime,rc, mce_file,a):
             nc.data(h,a,head)
 
     elif os.stat(netcdfdir + "/mce1_%s.nc" % (filestarttime)).st_size < 20 * 10**6: # of bytes here
-        if os.path.exists('/home/time/Desktop/time-data/netcdffiles/mce1_%s.nc' %(filestarttime)) :
-            if rc == 's' :
-                nc.data_all(h,a,head)
-            else :
-                nc.data(h,a,head)
+        if rc == 's' :
+            nc.data_all(h,a,head)
+        else :
+            nc.data(h,a,head)
 
     else:
         mce.close()
@@ -74,11 +73,12 @@ def readdata(f,head,filestarttime,rc, mce_file,a):
         filestarttime = datetime.datetime.utcnow()
         filestarttime = filestarttime.isoformat()
         mce = nc.new_file(h.shape, head, filestarttime)
-        if os.path.exists('/home/time/Desktop/time-data/netcdffiles/mce1_%s.nc' %(filestarttime)) :
-            if rc == 's' :
-                nc.data_all(h,a,head)
-            else :
-                nc.data(h,a,head)
+        if rc == 's' :
+            nc.data_all(h,a,head)
+        else :
+            nc.data(h,a,head)
+            
+    return filestarttime
 # =========================================================================================================
 def read_header(f):
     keys = []
