@@ -15,22 +15,30 @@ def netcdfdata(rc):
     filestarttime = 0
     dir = '/home/time/Desktop/time-data/mce1/'
     subprocess.call(['ssh -T time@time-mce-1.caltech.edu python /home/time/time-software/sftp/mce1_sftp.py'], shell=True)
-    time.sleep(0.5)
     end = dt.datetime.utcnow()
     begin = dt.datetime.utcnow()
     while end - begin < dt.timedelta(seconds=5):
-        mce_file = os.path.exists('/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a+1))
-        #print('/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a+1))
-        if mce_file:
-            print(len(os.listdir("/home/time/Desktop/time-data/mce1")) - 2)
-            for i in range(len(os.listdir("/home/time/Desktop/time-data/mce1")) - 2):
-                mce_file_name = '/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a)
-                a = a + 1
-                f = mce_data.SmallMCEFile(mce_file_name)
-                header = read_header(f)
-                mce, filestarttime = readdata(f, mce, header, a, filestarttime, rc)
-                print('File Read:' , mce_file_name.replace(dir,''))
-                begin = dt.datetime.now()
+        files = [dir + x for x in os.listdir(dir) if (x.startswith("temp") and not x.endswith(".run"))]
+        mce_file = min(files, key = os.path.getctime)
+        f = mce_data.SmallMCEFile(mce_file)
+        header = read_header(f)
+        mce, filestarttime = readdata(f, mce, header, a, filestarttime, rc)
+        a = a + 1
+        print('File Read:' , mce_file_name.replace(dir,''))
+        begin = dt.datetime.now()
+#-----------------------------------------------------------------------------------------------
+        # mce_file = os.path.exists('/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a+1))
+        # #print('/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a+1))
+        # if mce_file:
+        #     print(len(os.listdir("/home/time/Desktop/time-data/mce1")) - 2)
+        #     for i in range(len(os.listdir("/home/time/Desktop/time-data/mce1")) - 2):
+        #         mce_file_name = '/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a)
+        #         a = a + 1
+        #         f = mce_data.SmallMCEFile(mce_file_name)
+        #         header = read_header(f)
+        #         mce, filestarttime = readdata(f, mce, header, a, filestarttime, rc)
+        #         print('File Read:' , mce_file_name.replace(dir,''))
+        #         begin = dt.datetime.now()
                 #mce_file = os.path.exists('/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a+1))
         else :
             end = dt.datetime.utcnow()
