@@ -56,7 +56,7 @@ def new_file(h_size, head, filestarttime):
     parafilename = ('tempfiles/tempparameters.txt')
     parafile = open(parafilename, 'r')
     parameters = parafile.readline()#.strip().split()
-    guiparams[0] = nc.stringtochar(np.array[parameters],'S20')
+    guiparams[0] = nc.stringtochar(parameters,'S20')
     parafile.close()
 
     mce.close()
