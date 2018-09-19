@@ -17,13 +17,12 @@ def new_file(h_size, head, filestarttime):
     # mce_header = mce.createGroup('mce_header')
 
      # GUI PARAMETERS ---------------------------------------------------------------------------------
-    # mce.createDimension('det',1)
-    # mce.createDimension('obs',3)
-    # mce.createDimension('date',26)
-    # mce.createDimension('f',8)
-    # mce.createDimension('mode',2)
-    # mce.createDimension('r',1)
-    mce.createDimension('gui',20)
+    mce.createDimension('det',1)
+    mce.createDimension('obs',3)
+    mce.createDimension('date',26)
+    mce.createDimension('f',8)
+    mce.createDimension('mode',2)
+    mce.createDimension('r',1)
     mce.createDimension('t',None)
     # Dimensions for Data Arrays -------------------------------------------------------------------
     mce.createDimension('raw_rows',h_size[0])
@@ -35,13 +34,12 @@ def new_file(h_size, head, filestarttime):
 
 
     # creating variables --------------------------------------------------------------------------------
-    guiparams = mce.createVariable("params","S1",'gui')
-    # Observer = mce.createVariable("observer","S1","obs")
-    # Datetime = mce.createVariable('datetime', 'S1','date')
-    # Frames = mce.createVariable('frames', 'S1','f')
-    # Datamode = mce.createVariable('datamode','S1','mode')
-    # Detector = mce.createVariable('detector','f8','det')
-    # Rc = mce.createVariable('rc','S1','r') # can either use rc name or integer used by gui
+    Observer = mce.createVariable("observer","S1","obs")
+    Datetime = mce.createVariable('datetime', 'S1','date')
+    Frames = mce.createVariable('frames', 'S1','f')
+    Datamode = mce.createVariable('datamode','S1','mode')
+    Detector = mce.createVariable('detector','f8','det')
+    Rc = mce.createVariable('rc','S1','r') # can either use rc name or integer used by gui
     global Time
     Time = mce.createVariable('time','S1','t')
 
@@ -55,8 +53,11 @@ def new_file(h_size, head, filestarttime):
 
     parafilename = ('tempfiles/tempparameters.txt')
     parafile = open(parafilename, 'r')
-    parameters = parafile.readline()#.strip().split()
-    guiparams[0] = nc.stringtochar(parameters,'S20')
+    parameters = parafile.readline().strip().split()
+    Observer[0] = nc.stringtochar(np.array([parameters[0]],'S3'))
+    Frames[0] = nc.stringtochar(np.array([parameters[3]],'S8'))
+    Datamode[0] = nc.stringtochar(np.array([parameters[1]],'S2'))
+    Rc[0] = nc.stringtochar(np.array([parameters[2]],'S1'))
     parafile.close()
 
     mce.close()
@@ -64,14 +65,14 @@ def new_file(h_size, head, filestarttime):
 
 def data_all(h,a,head,filestarttime):
     mce = nc.Dataset(tempfiledir + "/mce1_%s.nc" %(filestarttime),"a")
-    Time[a] = nc.stringtochar(np.array[str(now.datetime.utcnow())],'S26')
+    Time[a] = nc.stringtochar(np.array([str(now.datetime.utcnow())],'S26'))
     Raw_Data_All[a,:,:,:] = h
     #Header[a,:,:] = head
     mce.close()
 
 def data(h,a,head,filestarttime):
     mce = nc.Dataset(tempfiledir + "/mce1_%s.nc" %(filestarttime),"a")
-    Time[a] = nc.stringtochar(np.array[str(now.datetime.utcnow())],'S26')
+    Time[a] = nc.stringtochar(np.array([str(now.datetime.utcnow())],'S26'))
     Raw_Data[a,:,:,:] = h
     #Header[a,:,:] = head
     mce.close()
