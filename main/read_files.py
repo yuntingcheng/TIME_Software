@@ -22,7 +22,7 @@ def netcdfdata(rc):
         head = read_header(f)
         readdata(f,head,filestarttime,rc,mce_file,a)
         a = a + 1
-        print 'File Read:' , mce_file_name.replace(dir,'')
+        print 'File Read:' , mce_file.replace(dir,'')
 #-----------------------------------------------------------------------------------------------
         # mce_file = os.path.exists('/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a+1))
         # #print('/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a+1))
