@@ -16,7 +16,7 @@ def netcdfdata(rc):
     mce = 0
     subprocess.call(['ssh -T time@time-mce-1.caltech.edu python /home/time/time-software/sftp/mce1_sftp.py'], shell=True)
     while True:
-        files = [dir + x for x in os.listdir(dir) if x.startswith("temp")]
+        files = [dir + x for x in os.listdir(dir) if (x.startswith("temp") and not x.endswith('.run'))]
         if len(files) != 0:
             print 'I found a file...'
         mce_file = min(files, key = os.path.getctime)
