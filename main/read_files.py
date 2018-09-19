@@ -6,29 +6,29 @@ import mce_data
 import netcdf as nc
 import subprocess
 import datetime
+import time
 
 def netcdfdata(rc):
-    print('HELLO!')
+    print('------ Data Parsing ------')
     a = 0
-    mcea = 0
-    mce = 1
-    n_files = 8
     filestarttime = 0
+    dir = '/home/time/Desktop/time-data/mce1'
+    subprocess.call(['ssh -T time@time-mce-1.caltech.edu python /home/time/time-software/sftp/mce1_sftp.py'], shell=True)
+    time.sleep(0.5)
     while True:
-        mcea = subprocess.call(['ssh -T time@time-mce-1.caltech.edu python /home/time/time-software/sftp/mce1_sftp.py %s %s' % (mcea, n_files)], shell=True)
         mce_file = os.path.exists('/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a+1))
-        print('/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a+1))
+        #print('/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a+1))
         if mce_file:
             print(len(os.listdir("/home/time/Desktop/time-data/mce1")) - 2)
             for i in range(len(os.listdir("/home/time/Desktop/time-data/mce1")) - 2):
-                print('netcdf: %s' % (a))
                 mce_file_name = '/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a)
                 a = a + 1
                 f = mce_data.SmallMCEFile(mce_file_name)
                 header = read_header(f)
                 mce, filestarttime = readdata(f, mce, header, a, filestarttime, rc)
-                mce_file = os.path.exists('/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a+1))
-
+                print('File Read:' , mce_file_name.replace(dir,''))
+                #mce_file = os.path.exists('/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a+1))
+# ===========================================================================================================================
 def readdata(f, mce, head, a, filestarttime, rc):
     h = f.Read(row_col=True, unfilter='DC').data
     # d = np.empty([h.shape[0],h.shape[1]],dtype=float)
@@ -66,7 +66,7 @@ def readdata(f, mce, head, a, filestarttime, rc):
             else :
                 nc.data(h,a,head)
     return mce, filestarttime
-
+# =========================================================================================================
 def read_header(f):
     keys = []
     values = []
@@ -89,7 +89,7 @@ def read_header(f):
     # print("+++++++++ MCE HEADER +++++++++")
     # print(head)
     # print("++++++++++++++++++++++++++++++")
-    # return head
+    return head
 
 if __name__ == '__main__':
     netcdfdata(sys.argv[1])
