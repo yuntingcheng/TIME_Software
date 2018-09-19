@@ -6,12 +6,10 @@ import sys
 import datetime as now
 from netCDF4 import num2date, date2num
 
-#from multipagegui import parameters
 
-
-def new_file(h_size, head, filestarttime):
-    tempfiledir = os.path.expanduser('/home/time/Desktop/time-data/netcdffiles')
-    mce = Dataset(tempfiledir + "/mce1_%s.nc" %(filestarttime),"w")#,format="NETCDF4")
+tempfiledir = '/home/time/Desktop/time-data/netcdffiles'
+def new_file(h_size, head, filestarttime, mce):
+    mce = Dataset(tempfiledir + "/mce1_%s.nc" %(filestarttime),"w",format="NETCDF4_CLASSIC")
 
     # create the gui parameters group
     guiparams = mce.createGroup('guiparams')
@@ -77,14 +75,19 @@ def new_file(h_size, head, filestarttime):
     Rc[0] = parameters[2]
     parafile.close()
 
+    mce.close()
     return mce
 
-def data_all(h,a,head):
+def data_all(h,a,head,filestarttime):
+    mce = Dataset(tempfiledir + "/mce1_%s.nc" %(filestarttime),"a")
     Time[a] = str(now.datetime.utcnow())
     Raw_Data_All[a,:,:,:] = h
     Header[a,:,:] = head
+    mce.close()
 
-def data(h,a,head):
+def data(h,a,head,filestarttime):
+    mce = Dataset(tempfiledir + "/mce1_%s.nc" %(filestarttime),"a")
     Time[a] = str(now.datetime.utcnow())
     Raw_Data[a,:,:,:] = h
     Header[a,:,:] = head
+    mce.close()
