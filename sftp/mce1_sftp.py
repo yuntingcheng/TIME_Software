@@ -25,8 +25,6 @@ def main():
 
             else :
                 print("File Doesn't Exist")
-        else :
-            pass
     else :
         print('File Transfer Stopped')
         sys.exit()
