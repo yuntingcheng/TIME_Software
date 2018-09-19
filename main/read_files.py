@@ -15,15 +15,15 @@ def netcdfdata(rc):
     filestarttime = filestarttime.isoformat()
     dir = '/home/time/Desktop/time-data/mce1/'
     mce = 0
+    finish = True
     subprocess.call(['ssh -T time@time-mce-1.caltech.edu python /home/time/time-software/sftp/mce1_sftp.py'], shell=True)
-    while True:
+    while finish == True:
+        finish = False
         files = [dir + x for x in os.listdir(dir) if (x.startswith("temp") and not x.endswith('.run'))]
-        if len(files) != 0:
-            print 'I found a file...'
         mce_file = min(files, key = os.path.getctime)
         f = mce_data.SmallMCEFile(mce_file)
         head = read_header(f)
-        readdata(f,head,filestarttime,rc,mce_file,a)
+        finish = readdata(f,head,filestarttime,rc,mce_file,a)
         a = a + 1
         print 'File Read:' , mce_file.replace(dir,'')
 #-----------------------------------------------------------------------------------------------
@@ -42,8 +42,7 @@ def netcdfdata(rc):
                 #mce_file = os.path.exists('/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a+1))
 
     else :
-        print 'Read Files Stopped'
-        sys.exit()
+        continue
 
 # ===========================================================================================================================
 def readdata(f,head,filestarttime,rc, mce_file,a):
@@ -85,6 +84,8 @@ def readdata(f,head,filestarttime,rc, mce_file,a):
                 nc.data_all(h,a,head)
             else :
                 nc.data(h,a,head)
+    finish = True
+    return finish
 # =========================================================================================================
 def read_header(f):
     keys = []

@@ -20,7 +20,7 @@ def main():
             if os.path.exists(mce_file_name):
                 subprocess.Popen(['scp', mce_file_name, 'time@time-master.caltech.edu:/home/time/Desktop/time-data/mce1/temp.%0.3i' % (a)]).wait()
                 subprocess.Popen(['rm %s' % (mce_file_name)],shell=True)
-                print 'File Transfered :' , mce_file_name.replace(dir,'')
+                #print 'File Transfered :' , mce_file_name.replace(dir,'')
                 a += 1
                 begin = dt.datetime.utcnow()
 
@@ -28,7 +28,7 @@ def main():
                 print "File Doesn't Exist"
         end = dt.datetime.utcnow()
     else :
-        print 'File Transfer Stopped' 
+        print 'File Transfer Stopped'
         sys.exit()
 
 if __name__ == '__main__':
