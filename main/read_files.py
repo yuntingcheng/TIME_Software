@@ -7,6 +7,7 @@ import netcdf as nc
 import subprocess
 import datetime
 import time
+import datetime as dt
 
 def netcdfdata(rc):
     print('------ Data Parsing ------')
@@ -15,7 +16,8 @@ def netcdfdata(rc):
     dir = '/home/time/Desktop/time-data/mce1/'
     subprocess.call(['ssh -T time@time-mce-1.caltech.edu python /home/time/time-software/sftp/mce1_sftp.py'], shell=True)
     time.sleep(0.5)
-    while True:
+    begintimer = dt.datetime.utcnow()
+    while endtime - begintimer < dt.timedelta(seconds=5):
         mce_file = os.path.exists('/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a+1))
         #print('/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a+1))
         if mce_file:
@@ -27,7 +29,14 @@ def netcdfdata(rc):
                 header = read_header(f)
                 mce, filestarttime = readdata(f, mce, header, a, filestarttime, rc)
                 print('File Read:' , mce_file_name.replace(dir,''))
+                begintimer = dt.datetime.now()
                 #mce_file = os.path.exists('/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a+1))
+        else :
+            continue
+    else :
+        print('Read Files Stopped')
+        sys.exit()
+
 # ===========================================================================================================================
 def readdata(f, mce, head, a, filestarttime, rc):
     h = f.Read(row_col=True, unfilter='DC').data
