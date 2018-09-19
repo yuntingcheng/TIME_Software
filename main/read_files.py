@@ -16,8 +16,9 @@ def netcdfdata(rc):
     dir = '/home/time/Desktop/time-data/mce1/'
     subprocess.call(['ssh -T time@time-mce-1.caltech.edu python /home/time/time-software/sftp/mce1_sftp.py'], shell=True)
     time.sleep(0.5)
-    begintimer = dt.datetime.utcnow()
-    while endtime - begintimer < dt.timedelta(seconds=5):
+    end = dt.datetime.utcnow()
+    begin = dt.datetime.utcnow()
+    while end - begin < dt.timedelta(seconds=5):
         mce_file = os.path.exists('/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a+1))
         #print('/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a+1))
         if mce_file:
@@ -29,9 +30,10 @@ def netcdfdata(rc):
                 header = read_header(f)
                 mce, filestarttime = readdata(f, mce, header, a, filestarttime, rc)
                 print('File Read:' , mce_file_name.replace(dir,''))
-                begintimer = dt.datetime.now()
+                begin = dt.datetime.now()
                 #mce_file = os.path.exists('/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a+1))
         else :
+            end = dt.datetime.utcnow()
             continue
     else :
         print('Read Files Stopped')
