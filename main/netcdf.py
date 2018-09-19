@@ -44,11 +44,6 @@ def new_file(h_size, head, filestarttime):
     global Time
     Time = mce.createVariable('time','S1','t')
 
-    global Rms_Noise_All
-    global Rms_Noise
-    Rms_Noise_All = mce.createVariable('rms_noise_all','f8',('t','rms_rows','rms_cols_all'))
-    Rms_Noise = mce.createVariable('rms_noise','f8',('t','rms_rows','rms_cols'))
-
     global Raw_Data_All
     global Raw_Data
     Raw_Data = mce.createVariable('raw_data','f8',('t','raw_rows','raw_cols','raw_num'))
