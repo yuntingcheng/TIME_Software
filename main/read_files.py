@@ -21,7 +21,7 @@ def netcdfdata(rc):
         mce_file = min(files, key = os.path.getctime)
         f = mce_data.SmallMCEFile(mce_file)
         head = read_header(f)
-        filestarttime, mce = readdata(f,head,filestarttime,rc,mce_file,a)
+        filestarttime, mce = readdata(f,head,filestarttime,rc,mce_file,a,mce)
         a = a + 1
         print 'File Read:' , mce_file.replace(dir,'')
 #-----------------------------------------------------------------------------------------------
@@ -40,7 +40,7 @@ def netcdfdata(rc):
                 #mce_file = os.path.exists('/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a+1))
 
 # ===========================================================================================================================
-def readdata(f,head,filestarttime,rc, mce_file,a):
+def readdata(f,head,filestarttime,rc,mce_file,a,mce):
     h = f.Read(row_col=True, unfilter='DC').data
     # d = np.empty([h.shape[0],h.shape[1]],dtype=float)
     # for b in range(h.shape[0]):
