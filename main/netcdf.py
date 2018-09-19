@@ -81,10 +81,12 @@ def new_file(h_size, head, filestarttime):
 
 def data_all(h,a,head):
     Time[a] = str(now.datetime.utcnow())
-    Raw_Data_All[a,:,:,:] = h
-    Header[a,:,:] = head
+    Raw_Data_All[a] = h
+    #Raw_Data_All[a,:,:,:] = h
+    #Header[a,:,:] = head
 
 def data(h,a,head):
     Time[a] = str(now.datetime.utcnow())
-    Raw_Data[a,:,:,:] = h
-    Header[a,:,:] = head
+    Raw_Data[a] = h
+    #Raw_Data[a,:,:,:] = h
+    #Header[a,:,:] = head
