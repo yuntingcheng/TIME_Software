@@ -9,19 +9,20 @@ import datetime
 import time
 
 def netcdfdata(rc):
-    print('------ Data Parsing ------')
+    print '------ Data Parsing ------'
     a = 0
     filestarttime = 0
     dir = '/home/time/Desktop/time-data/mce1/'
+    mce = 0
     subprocess.call(['ssh -T time@time-mce-1.caltech.edu python /home/time/time-software/sftp/mce1_sftp.py'], shell=True)
     while True:
         files = [dir + x for x in os.listdir(dir) if (x.startswith("temp") and not x.endswith(".run"))]
         mce_file = min(files, key = os.path.getctime)
         f = mce_data.SmallMCEFile(mce_file)
-        header = read_header(f)
-        mce, filestarttime = readdata(f, mce, header, a, filestarttime, rc)
+        head = read_header(f)
+        readdata(f,head,filestarttime,rc,mce_file,a)
         a = a + 1
-        print('File Read:' , mce_file_name.replace(dir,''))
+        print 'File Read:' , mce_file_name.replace(dir,'')
 #-----------------------------------------------------------------------------------------------
         # mce_file = os.path.exists('/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a+1))
         # #print('/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a+1))
@@ -38,11 +39,11 @@ def netcdfdata(rc):
                 #mce_file = os.path.exists('/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a+1))
 
     else :
-        print('Read Files Stopped')
+        print 'Read Files Stopped'
         sys.exit()
 
 # ===========================================================================================================================
-def readdata(f, mce, head, a, filestarttime, rc):
+def readdata(f,head,filestarttime, rc, mce_file,a):
     h = f.Read(row_col=True, unfilter='DC').data
     # d = np.empty([h.shape[0],h.shape[1]],dtype=float)
     # print("++++++++ H Array ++++++++")
@@ -53,15 +54,15 @@ def readdata(f, mce, head, a, filestarttime, rc):
     #         d[b][c] = (np.std(h[b][c][:],dtype=float))
     #print h.shape
 
-    old_mce_file_name = '/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a - 1)
-    subprocess.Popen(['rm %s' % (old_mce_file_name)], shell=True)
+    #old_mce_file_name = '/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a - 1)
+    subprocess.Popen(['rm %s' % (mce_file)], shell=True)
 
-    tempfiledir = os.path.expanduser('/home/time/Desktop/time-data/netcdffiles')
-    if a == 1:
+    netcdfdir = os.path.expanduser('/home/time/Desktop/time-data/netcdffiles')
+    if a == 0:
         filestarttime = datetime.datetime.utcnow()
         filestarttime = filestarttime.isoformat()
         mce = nc.new_file(h.shape, head, filestarttime)
-    elif os.stat(tempfiledir + "/mce1_%s.nc" % (filestarttime)).st_size < 20 * 10**6: # of bytes here
+    elif os.stat(netcdfdir + "/mce1_%s.nc" % (filestarttime)).st_size < 20 * 10**6: # of bytes here
         if os.path.exists('/home/time/Desktop/time-data/netcdffiles/mce1_%s.nc' %(filestarttime)) :
             if rc == 's' :
                 nc.data_all(h,a,head)
@@ -69,7 +70,7 @@ def readdata(f, mce, head, a, filestarttime, rc):
                 nc.data(h,a,head)
     else:
         mce.close()
-        print('----------New File----------')
+        print '----------New File----------'
         filestarttime = datetime.datetime.utcnow()
         filestarttime = filestarttime.isoformat()
         mce = nc.new_file(h.shape, head, filestarttime)
@@ -78,7 +79,6 @@ def readdata(f, mce, head, a, filestarttime, rc):
                 nc.data_all(h,a,head)
             else :
                 nc.data(h,a,head)
-    return mce, filestarttime
 # =========================================================================================================
 def read_header(f):
     keys = []
@@ -91,7 +91,7 @@ def read_header(f):
                 elif value[i] == False:
                     value[i] = "0"
                 else:
-                    print("I don't know what I am...")
+                    print "I don't know what I am..."
             value = ''.join(map(str,value))
         value = str(value)
         keys.append(key)
