@@ -34,14 +34,14 @@ def new_file(h_size, head, filestarttime):
 
 
     # creating variables --------------------------------------------------------------------------------
-    Observer = mce.createVariable("observer","S1",("obs"))
-    Datetime = mce.createVariable('datetime', 'S1',('date'))
-    Frames = mce.createVariable('frames', 'S1',('f'))
-    Datamode = mce.createVariable('datamode','S1',('mode'))
-    Detector = mce.createVariable('detector','f8','det')
-    Rc = mce.createVariable('rc','S1',('r')) # can either use rc name or integer used by gui
+    Observer = mce.createVariable("observer","S1",("obs",))
+    Datetime = mce.createVariable('datetime', 'S1',('date',))
+    Frames = mce.createVariable('frames', 'S1',('f',))
+    Datamode = mce.createVariable('datamode','S1',('mode',))
+    Detector = mce.createVariable('detector','f8',('det',))
+    Rc = mce.createVariable('rc','S1',('r',)) # can either use rc name or integer used by gui
     global Time
-    Time = mce.createVariable('time','S1',('t'))
+    Time = mce.createVariable('time','S1',('t',))
 
     global Raw_Data_All
     global Raw_Data
@@ -54,10 +54,10 @@ def new_file(h_size, head, filestarttime):
     parafilename = ('tempfiles/tempparameters.txt')
     parafile = open(parafilename, 'r')
     parameters = parafile.readline().strip().split()
-    Observer[0] = nc.stringtochar(np.array([parameters[0]],'S3'))
-    Frames[0] = nc.stringtochar(np.array([parameters[3]],'S8'))
-    Datamode[0] = nc.stringtochar(np.array([parameters[1]],'S2'))
-    Rc[0] = nc.stringtochar(np.array([parameters[2]],'S1'))
+    Observer[0] = nc.stringtochar(np.array((parameters[0],),dtype='S3'))
+    Frames[0] = nc.stringtochar(np.array((parameters[3],),dtype='S8'))
+    Datamode[0] = nc.stringtochar(np.array((parameters[1],),dtype='S2'))
+    Rc[0] = nc.stringtochar(np.array((parameters[2],),dtype='S1'))
     parafile.close()
 
     mce.close()
@@ -65,14 +65,14 @@ def new_file(h_size, head, filestarttime):
 
 def data_all(h,a,head,filestarttime):
     mce = nc.Dataset(tempfiledir + "/mce1_%s.nc" %(filestarttime),"a")
-    Time[a] = nc.stringtochar(np.array([str(now.datetime.utcnow())],'S26'))
+    Time[a] = nc.stringtochar(np.array((str(now.datetime.utcnow()),),dtype='S26'))
     Raw_Data_All[a,:,:,:] = h
     #Header[a,:,:] = head
     mce.close()
 
 def data(h,a,head,filestarttime):
     mce = nc.Dataset(tempfiledir + "/mce1_%s.nc" %(filestarttime),"a")
-    Time[a] = nc.stringtochar(np.array([str(now.datetime.utcnow())],'S26'))
+    Time[a] = nc.stringtochar(np.array((str(now.datetime.utcnow()),),dtype='S26'))
     Raw_Data[a,:,:,:] = h
     #Header[a,:,:] = head
     mce.close()
