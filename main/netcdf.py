@@ -74,10 +74,10 @@ def new_file(h_size, head, filestarttime):
 def data_all(h,a,head,filestarttime):
     mce = nc.Dataset(tempfiledir + "/mce1_%s.nc" %(filestarttime),"a")
     Time[a,:] = np.array([str(now.datetime.utcnow())],dtype='S26')
-    #Raw_Data_All[a,:,:,:] = h
+    Raw_Data_All[a][:][:][:] = h
     #print Raw_Data_All.shape
-    new_head = np.array([head],dtype='S15').reshape((2,16))
-    Header[a,:,:] = new_head
+    #new_head = np.array([head],dtype='S15').reshape((2,16))
+    #Header[a,:,:] = new_head
     mce.close()
 
 def data(h,a,head,filestarttime):
