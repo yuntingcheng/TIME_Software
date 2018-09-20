@@ -49,7 +49,7 @@ def new_file(h_size, head, filestarttime):
     Raw_Data_All = mce.createVariable('raw_data_all','f8',('t','raw_rows','raw_cols_all','raw_num'))
 
     global Header
-    Header = mce.createVariable('header','S3',('t','v','k'))
+    Header = mce.createVariable('header','S1',('t','v','k'))
 
     parafilename = ('tempfiles/tempparameters.txt')
     parafile = open(parafilename, 'r')
@@ -74,12 +74,14 @@ def data_all(h,a,head,filestarttime):
     mce = nc.Dataset(tempfiledir + "/mce1_%s.nc" %(filestarttime),"a")
     Time[a] = np.array([str(now.datetime.utcnow())],dtype='S26')
     Raw_Data_All[a,:,:,:] = h
-    Header[a,:,:] = head
+    new_head = np.array([head],dtype='S3')
+    Header[a,:,:] = new_head
     mce.close()
 
 def data(h,a,head,filestarttime):
     mce = nc.Dataset(tempfiledir + "/mce1_%s.nc" %(filestarttime),"a")
     Time[a] = np.array([str(now.datetime.utcnow())],dtype='S26')
     Raw_Data[a,:,:,:] = h
-    Header[a,:,:] = head
+    new_head = np.array([head],dtype='S3')
+    Header[a,:,:] = new_head
     mce.close()
