@@ -27,7 +27,7 @@ def netcdfdata(rc):
             print 'File Read:' , mce_file.replace(dir,'')
         else :
             print 'No More Files'
-            subprocess.Popen(['rm temp.run'], shell=True)
+            subprocess.Popen(['rm' dir+'temp.run'], shell=True)
             sys.exit()
 
 # ===========================================================================================================================
