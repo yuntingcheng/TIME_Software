@@ -73,8 +73,8 @@ def new_file(h_size, head, filestarttime):
 
 def data_all(h,a,head,filestarttime):
     mce = nc.Dataset(tempfiledir + "/mce1_%s.nc" %(filestarttime),"a")
-    Time[:] = np.array([str(now.datetime.utcnow())],dtype='S26')
-    Raw_Data_All[:] = h
+    Time[a,:] = np.array([str(now.datetime.utcnow())],dtype='S26')
+    Raw_Data_All[a,:,:,:] = h[:,:,:]
     print Raw_Data_All.shape
     #new_head = np.array([head],dtype='S3')
     #print new_head

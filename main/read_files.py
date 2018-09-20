@@ -73,6 +73,7 @@ def read_header(f):
     keys = np.asarray(keys,dtype=object)
     values = np.asarray(values,dtype=object)
     head = np.array((keys,values)).T
+    print head
     return head
 
 if __name__ == '__main__':
