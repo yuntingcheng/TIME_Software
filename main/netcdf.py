@@ -60,6 +60,7 @@ def new_file(h_size, head, filestarttime):
     Frames._Encoding = 'ascii'
     Datamode._Encoding = 'ascii'
     Rc._Encoding = 'ascii'
+    Time._Encoding = 'ascii'
 
     Observer[:] = np.array([parameters[0]],dtype='S3')
     Frames[:] = np.array([parameters[3]],dtype='S8')
@@ -74,16 +75,17 @@ def data_all(h,a,head,filestarttime):
     mce = nc.Dataset(tempfiledir + "/mce1_%s.nc" %(filestarttime),"a")
     Time[a] = np.array([str(now.datetime.utcnow())],dtype='S26')
     Raw_Data_All[a,:,:,:] = h
-    new_head = np.array([head],dtype='S3')
-    print new_head
+    print Raw_Data_All.shape
+    #new_head = np.array([head],dtype='S3')
+    #print new_head
     #Header[a,:,:] = new_head
     mce.close()
 
 def data(h,a,head,filestarttime):
     mce = nc.Dataset(tempfiledir + "/mce1_%s.nc" %(filestarttime),"a")
     Time[a] = np.array([str(now.datetime.utcnow())],dtype='S26')
-    Raw_Data[a,:,:,:] = h
-    new_head = np.array([head],dtype='S3')
-    print new_head
+    #Raw_Data[a,:,:,:] = h
+    #new_head = np.array([head],dtype='S3')
+    #print new_head
     #Header[a,:,:] = new_head
     mce.close()
