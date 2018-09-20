@@ -29,6 +29,7 @@ def main():
         end = dt.datetime.utcnow()
     else :
         print 'File Transfer Stopped'
+        subprocess.Popen(['rm temp*'],shell=True)
         sys.exit()
 
 if __name__ == '__main__':
