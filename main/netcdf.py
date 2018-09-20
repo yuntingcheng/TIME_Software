@@ -75,7 +75,8 @@ def data_all(h,a,head,filestarttime):
     Time[a] = np.array([str(now.datetime.utcnow())],dtype='S26')
     Raw_Data_All[a,:,:,:] = h
     new_head = np.array([head],dtype='S3')
-    Header[a,:,:] = new_head
+    print new_head
+    #Header[a,:,:] = new_head
     mce.close()
 
 def data(h,a,head,filestarttime):
@@ -83,5 +84,6 @@ def data(h,a,head,filestarttime):
     Time[a] = np.array([str(now.datetime.utcnow())],dtype='S26')
     Raw_Data[a,:,:,:] = h
     new_head = np.array([head],dtype='S3')
-    Header[a,:,:] = new_head
+    print new_head
+    #Header[a,:,:] = new_head
     mce.close()
