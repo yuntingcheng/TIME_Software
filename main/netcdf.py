@@ -54,10 +54,16 @@ def new_file(h_size, head, filestarttime):
     parafilename = ('tempfiles/tempparameters.txt')
     parafile = open(parafilename, 'r')
     parameters = parafile.readline().strip().split()
-    Observer[0] = nc.stringtochar(np.array([parameters[0]],dtype='S3').reshape((1,)))
-    Frames[0] = nc.stringtochar(np.array([parameters[3]],dtype='S8').reshape((1,)))
-    Datamode[0] = nc.stringtochar(np.array([parameters[1]],dtype='S2').reshape((1,)))
-    Rc[0] = nc.stringtochar(np.array([parameters[2]],dtype='S1').reshape((1,)))
+
+    Observer._Encoding = 'ascii'
+    Frames._Encoding = 'ascii'
+    Datamode._Encoding = 'ascii'
+    Rc._Encoding = 'ascii'
+
+    Observer[:] = np.array([parameters[0]],dtype='S3')
+    Frames[:] = np.array([parameters[3]],dtype='S8')
+    Datamode[:] = np.array([parameters[1]],dtype='S2')
+    Rc[:] = np.array([parameters[2]],dtype='S1')
     parafile.close()
 
     mce.close()
@@ -65,14 +71,14 @@ def new_file(h_size, head, filestarttime):
 
 def data_all(h,a,head,filestarttime):
     mce = nc.Dataset(tempfiledir + "/mce1_%s.nc" %(filestarttime),"a")
-    Time[a] = nc.stringtochar(np.array([str(now.datetime.utcnow())],dtype='S26').reshape((1,)))
+    Time[a] = np.array([str(now.datetime.utcnow())],dtype='S26')
     Raw_Data_All[a,:,:,:] = h
     #Header[a,:,:] = head
     mce.close()
 
 def data(h,a,head,filestarttime):
     mce = nc.Dataset(tempfiledir + "/mce1_%s.nc" %(filestarttime),"a")
-    Time[a] = nc.stringtochar(np.array([str(now.datetime.utcnow())],dtype='S26').reshape((1,)))
+    Time[a] = np.array([str(now.datetime.utcnow())],dtype='S26')
     Raw_Data[a,:,:,:] = h
     #Header[a,:,:] = head
     mce.close()
