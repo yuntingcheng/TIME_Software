@@ -7,8 +7,7 @@ import datetime as dt
 
 def main():
     dir = '/data/cryo/current_data/'
-    sys.stdout.write('------- Starting Data Transfer -------')
-    sys.stdout.flush()
+    print '------- Starting Data Transfer -------'
     a = 0
     begin = dt.datetime.utcnow()
     end = dt.datetime.utcnow()
@@ -26,12 +25,10 @@ def main():
                 begin = dt.datetime.utcnow()
 
             else :
-                sys.stdout.write("File Doesn't Exist")
-                sys.stdout.flush()
+                print "File Doesn't Exist"
         end = dt.datetime.utcnow()
     else :
-        sys.stdout.write('File Transfer Stopped')
-        sys.stdout.flush()
+        print 'File Transfer Stopped'
         subprocess.Popen(['rm temp*'],shell=True)
         subprocess.Popen(['rm /data/cryo/current_data/temp*'],shell=True)
         sys.exit()

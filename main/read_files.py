@@ -24,12 +24,11 @@ def netcdfdata(rc):
             f = mce_data.SmallMCEFile(mce_file)
             head = read_header(f)
             filestarttime, mce, a = readdata(f,head,filestarttime,rc,mce_file,a,mce)
-            logging.warning('File Read: %s' %(mce_file.replace(dir,'')))
-            # sys.stdout.write('File Read: %s' %(mce_file.replace(dir,'')))
-            # sys.stdout.flush()
+            #logging.warning('File Read: %s' %(mce_file.replace(dir,'')))
+            print 'File Read: %s' %(mce_file.replace(dir,''))
+
         else :
-            sys.stdout.write('No More Files')
-            sys.stdout.flush()
+            print 'No More Files'
             subprocess.Popen(['rm /home/time/Desktop/time-data/mce1/temp.run'], shell=True)
             sys.exit()
 
@@ -45,8 +44,7 @@ def readdata(f,head,filestarttime,rc,mce_file,a,mce):
 
     netcdfdir = '/home/time/Desktop/time-data/netcdffiles'
     if a == 0 :
-        sys.stdout.write('----------New File----------')
-        sys.stdout.flush()
+        print '----------New File----------'
         filestarttime = datetime.datetime.utcnow()
         filestarttime = filestarttime.isoformat()
         nc.new_file(h.shape, head, filestarttime)
@@ -57,8 +55,7 @@ def readdata(f,head,filestarttime,rc,mce_file,a,mce):
 
     elif os.stat(netcdfdir + "/mce1_%s.nc" % (filestarttime)).st_size >= 20 * 10**6 :
         a = 0
-        sys.stdout.write('----------New File----------')
-        sys.stdout.flush()
+        print '----------New File----------'
         filestarttime = datetime.datetime.utcnow()
         filestarttime = filestarttime.isoformat()
         nc.new_file(h.shape, head, filestarttime)
