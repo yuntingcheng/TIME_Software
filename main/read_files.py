@@ -7,6 +7,7 @@ import netcdf as nc
 import subprocess
 import datetime
 import time
+import logging
 
 def netcdfdata(rc):
     print '------ Data Parsing ------'
