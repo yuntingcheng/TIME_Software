@@ -11,6 +11,7 @@ import time
 def netcdfdata(rc):
     print '------ Data Parsing ------'
     a = 0
+    n = 0
     filestarttime = datetime.datetime.utcnow()
     filestarttime = filestarttime.isoformat()
     dir = '/home/time/Desktop/time-data/mce1/'
@@ -22,7 +23,7 @@ def netcdfdata(rc):
             mce_file = min(files, key = os.path.getctime)
             f = mce_data.SmallMCEFile(mce_file)
             head = read_header(f)
-            filestarttime, mce = readdata(f,head,filestarttime,rc,mce_file,a,mce)
+            filestarttime, mce = readdata(f,head,filestarttime,rc,mce_file,a,mce,n)
             print 'File Read:' , mce_file.replace(dir,'')
         else :
             print 'No More Files'
@@ -30,7 +31,7 @@ def netcdfdata(rc):
             sys.exit()
 
 # ===========================================================================================================================
-def readdata(f,head,filestarttime,rc,mce_file,a,mce):
+def readdata(f,head,filestarttime,rc,mce_file,a,mce,n):
     h = f.Read(row_col=True, unfilter='DC').data
     # d = np.empty([h.shape[0],h.shape[1]],dtype=float)
     # for b in range(h.shape[0]):
@@ -41,7 +42,14 @@ def readdata(f,head,filestarttime,rc,mce_file,a,mce):
 
     netcdfdir = '/home/time/Desktop/time-data/netcdffiles'
     #if a == 0 or os.stat(netcdfdir + "/mce1_%s.nc" % (filestarttime)).st_size >= 20 * 10**6 :
-    if (a == 0 or a == 10):
+    if n == 0:
+        print '----------New File----------'
+        filestarttime = datetime.datetime.utcnow()
+        filestarttime = filestarttime.isoformat()
+        nc.new_file(h.shape, head, filestarttime)
+
+    elif n == 10 :
+        n = 0
         print '----------New File----------'
         filestarttime = datetime.datetime.utcnow()
         filestarttime = filestarttime.isoformat()
@@ -51,7 +59,7 @@ def readdata(f,head,filestarttime,rc,mce_file,a,mce):
         nc.data_all(h,a,head,filestarttime)
     else :
         nc.data(h,a,head,filestarttime)
-
+    n = n + 1
     a = a + 1
     return filestarttime, mce
 # =========================================================================================================
