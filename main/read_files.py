@@ -16,8 +16,6 @@ def netcdfdata(rc):
     filestarttime = filestarttime.isoformat()
     dir = '/home/time/Desktop/time-data/mce1/'
     mce = 0
-    FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
-    logging.basicConfig(format=FORMAT)
     subprocess.call(['ssh -T time@time-mce-1.caltech.edu python /home/time/time-software/sftp/mce1_sftp.py'], shell=True)
     while True:
         files = [dir + x for x in os.listdir(dir) if (x.startswith("temp") and not x.endswith('.run'))]
