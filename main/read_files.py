@@ -49,6 +49,7 @@ def readdata(f,head,filestarttime,rc,mce_file,a,mce):
             nc.data_all(h,a,head,filestarttime)
         else :
             nc.data(h,a,head,filestarttime)
+        print 'a :' a
 
     elif os.stat(netcdfdir + "/mce1_%s.nc" % (filestarttime)).st_size >= 20 * 10**6 :
         a = 0
@@ -60,12 +61,15 @@ def readdata(f,head,filestarttime,rc,mce_file,a,mce):
             nc.data_all(h,a,head,filestarttime)
         else :
             nc.data(h,a,head,filestarttime)
+        print 'a :' a
 
     else :
         if rc == 's' :
             nc.data_all(h,a,head,filestarttime)
         else :
             nc.data(h,a,head,filestarttime)
+
+        print 'a :' a
     a = a + 1
     return filestarttime, mce, a
 # =========================================================================================================
