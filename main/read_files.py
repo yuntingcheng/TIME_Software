@@ -18,9 +18,8 @@ def netcdfdata(rc):
     filestarttime = 0
     dir = '/home/time/Desktop/time-data/mce1/'
     subprocess.Popen(['ssh -T time@time-mce-1.caltech.edu python /home/time/time-software/sftp/mce1_sftp.py'], shell=True)
-    begin = dt.datetime.utcnow()
-    end = dt.datetime.utcnow()
-    while end - begin < dt.timedelta(seconds=5):
+
+    while True:
         mce_file = os.path.exists('/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a+1))
         if mce_file:
             for i in range(len(os.listdir("/home/time/Desktop/time-data/mce1")) - 2):
@@ -31,8 +30,7 @@ def netcdfdata(rc):
                 mce_file = os.path.exists('/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a+1))
                 print 'File Read: %s' %(mce_file_name.replace(dir,''))
                 a = a + 1
-                begin = dt.datetime.utcnow()
-        end = dt.datetime.utcnow()
+
     else :
         print 'No More Files'
         subprocess.Popen(['rm /home/time/Desktop/time-data/mce1/temp.run'], shell=True)
@@ -52,21 +50,16 @@ def readdata(f, mce_file_name, mce, head, n, a, filestarttime, rc):
     if n == 0:
         filestarttime = datetime.datetime.utcnow()
         filestarttime = filestarttime.isoformat()
+        print '------------ New File -------------'
         mce = nc.new_file(h.shape, head, filestarttime)
         if rc == 's' :
             nc.data_all(h,n,head,filestarttime)
         else :
             nc.data(h,n,head,filestarttime)
-        n = n + 1
-    elif os.stat(netcdfdir + "/mce1_%s.nc" % (filestarttime)).st_size < 20 * 10**6: # of bytes here
-        if rc == 's' :
-            nc.data_all(h,n,head,filestarttime)
-        else :
-            nc.data(h,n,head,filestarttime)
-        n = n + 1
-    else:
+
+    elif os.stat(netcdfdir + "/mce1_%s.nc" % (filestarttime)).st_size >= 20 * 10**6:
         n = 0
-        print('----------New File----------')
+        print '----------- New File ------------'
         filestarttime = datetime.datetime.utcnow()
         filestarttime = filestarttime.isoformat()
         mce = nc.new_file(h.shape, head, filestarttime)
@@ -74,6 +67,13 @@ def readdata(f, mce_file_name, mce, head, n, a, filestarttime, rc):
             nc.data_all(h,n,head,filestarttime)
         else :
             nc.data(h,n,head,filestarttime)
+
+    else:
+        if rc == 's' :
+            nc.data_all(h,n,head,filestarttime)
+        else :
+            nc.data(h,n,head,filestarttime)
+    n = n + 1
     return mce, n, filestarttime
 
 # =========================================================================================================
