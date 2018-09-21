@@ -22,12 +22,12 @@ def netcdfdata(rc):
     while True:
         mce_file = os.path.exists('/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a+1))
         if mce_file:
-            for i in range(len(os.listdir("/home/time/Desktop/time-data/mce1")) - 2):
-                mce_file_name = '/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a)
-                f = mce_data.SmallMCEFile(mce_file_name)
+            files = [dir + x for x in os.listdir(dir) if (x.startswith("temp") and not x.endswith('.run'))]
+            if len(files) != 0:
+                mce_file = min(files, key = os.path.getctime)
+                f = mce_data.SmallMCEFile(mce_file)
                 header = read_header(f)
-                mce, n, filestarttime = readdata(f, mce_file_name, mce, header, n, a, filestarttime, rc)
-                mce_file = os.path.exists('/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a+1))
+                mce, n, filestarttime = readdata(f, mce_file, mce, header, n, a, filestarttime, rc)
                 print 'File Read: %s' %(mce_file_name.replace(dir,''))
                 a = a + 1
 
@@ -37,15 +37,14 @@ def netcdfdata(rc):
         sys.exit()
 
 # ===========================================================================================================================
-def readdata(f, mce_file_name, mce, head, n, a, filestarttime, rc):
+def readdata(f, mce_file, mce, head, n, a, filestarttime, rc):
     h = f.Read(row_col=True, unfilter='DC').data
     # d = np.empty([h.shape[0],h.shape[1]],dtype=float)
     # for b in range(h.shape[0]):
     #     for c in range(h.shape[1]):
     #         d[b][c] = (np.std(h[b][c][:],dtype=float))
 
-    #old_mce_file_name = '/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a-1)
-    #subprocess.Popen(['rm %s' % (old_mce_file_name)], shell=True)
+    subprocess.Popen(['rm %s' % (mce_file)], shell=True)
     netcdfdir = '/home/time/Desktop/time-data/netcdffiles'
 
     if n == 0:
