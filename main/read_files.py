@@ -23,7 +23,7 @@ def netcdfdata(rc):
             f = mce_data.SmallMCEFile(mce_file)
             head = read_header(f)
             filestarttime, mce, a = readdata(f,head,filestarttime,rc,mce_file,a,mce)
-            sys.stdout.write('File Read:' , mce_file.replace(dir,''))
+            sys.stdout.write('File Read:' mce_file.replace(dir,''))
             sys.stdout.flush()
         else :
             sys.stdout.write('No More Files')
