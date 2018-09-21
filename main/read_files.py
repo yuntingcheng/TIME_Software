@@ -46,13 +46,13 @@ def readdata(f,head,filestarttime,rc,mce_file,a,mce):
         filestarttime = datetime.datetime.utcnow()
         filestarttime = filestarttime.isoformat()
         nc.new_file(h.shape, head, filestarttime)
-        a = a + 1
 
     if rc == 's' :
         nc.data_all(h,a,head,filestarttime)
     else :
         nc.data(h,a,head,filestarttime)
 
+    a = a + 1
     return filestarttime, mce
 # =========================================================================================================
 def read_header(f):
