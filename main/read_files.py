@@ -22,18 +22,17 @@ def netcdfdata(rc):
     end = dt.datetime.utcnow()
     while end - begin < dt.timedelta(seconds=5):
         mce_file = os.path.exists('/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a+1))
-        print('/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a+1))
         if mce_file:
             for i in range(len(os.listdir("/home/time/Desktop/time-data/mce1")) - 2):
                 mce_file_name = '/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a)
-                a = a + 1
                 f = mce_data.SmallMCEFile(mce_file_name)
                 header = read_header(f)
                 mce, n, filestarttime = readdata(f, mce_file_name, mce, header, n, a, filestarttime, rc)
                 mce_file = os.path.exists('/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a+1))
                 print 'File Read: %s' %(mce_file_name.replace(dir,''))
+                a = a + 1
                 begin = dt.datetime.utcnow()
-            end = dt.datetime.utcnow()
+        end = dt.datetime.utcnow()
     else :
         print 'No More Files'
         subprocess.Popen(['rm /home/time/Desktop/time-data/mce1/temp.run'], shell=True)
