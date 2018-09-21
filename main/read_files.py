@@ -43,7 +43,7 @@ def readdata(f, mce_file_name, mce, head, n, a, filestarttime, rc):
     # for b in range(h.shape[0]):
     #     for c in range(h.shape[1]):
     #         d[b][c] = (np.std(h[b][c][:],dtype=float))
-    old_mce_file_name = '/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a - 1)
+    old_mce_file_name = '/home/time/Desktop/time-data/mce1/temp.%0.3i' %(a-1)
     subprocess.Popen(['rm %s' % (old_mce_file_name)], shell=True)
     netcdfdir = '/home/time/Desktop/time-data/netcdffiles'
 
