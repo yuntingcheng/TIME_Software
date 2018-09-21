@@ -15,12 +15,12 @@ def main():
         if os.path.exists("/data/cryo/current_data/temp.%0.3i" %(a+1)) :
             mce_file_name = '/data/cryo/current_data/temp.%0.3i' %(a)
             if a == 0:
-                subprocess.Popen(['scp', '/data/cryo/current_data/temp.run', 'time@time-master.caltech.edu:/home/time/Desktop/time-data/mce1/temp.run']).wait()
+                subprocess.call(['scp', '/data/cryo/current_data/temp.run', 'time@time-master.caltech.edu:/home/time/Desktop/time-data/mce1/temp.run'])
                 #subprocess.Popen(['rm %s' % ('/data/cryo/current_data/temp.run')],shell=True)
             if os.path.exists(mce_file_name):
-                subprocess.Popen(['scp', mce_file_name, 'time@time-master.caltech.edu:/home/time/Desktop/time-data/mce1/temp.%0.3i' % (a)]).wait()
+                subprocess.call(['scp', mce_file_name, 'time@time-master.caltech.edu:/home/time/Desktop/time-data/mce1/temp.%0.3i' % (a)])
                 subprocess.Popen(['rm %s' % (mce_file_name)],shell=True)
-                #print 'File Transfered :' , mce_file_name.replace(dir,'')
+                print 'File Transfered :' , mce_file_name.replace(dir,'')
                 a += 1
                 begin = dt.datetime.utcnow()
 
@@ -31,7 +31,8 @@ def main():
         print 'File Transfer Stopped'
         #subprocess.Popen(['rm temp*'],shell=True)
         #subprocess.Popen(['rm /data/cryo/current_data/temp*'],shell=True)
-        subprocess.Popen(['ssh -T time@time-master.caltech.edu pkill -f mce1_sftp.py'])
+        subprocess.Popen(['ssh -T time@time-master.caltech.edu pkill -f /home/time/time-software/main/read_files.py'])
+        print 'File Read Stopped'
         sys.exit()
 
 if __name__ == '__main__':
