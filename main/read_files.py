@@ -9,6 +9,7 @@ import datetime
 import time
 import logging
 import settings as st
+import datetime as dt
 
 def netcdfdata(rc):
     a = 0
