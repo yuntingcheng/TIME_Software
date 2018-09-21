@@ -24,7 +24,6 @@ def netcdfdata(rc):
             head = read_header(f)
             filestarttime, mce, a = readdata(f,head,filestarttime,rc,mce_file,a,mce)
             print 'File Read:' , mce_file.replace(dir,'')
-            sys.stdout.flush()
         else :
             print 'No More Files'
             subprocess.Popen(['rm /home/time/Desktop/time-data/mce1/temp.run'], shell=True)
@@ -50,7 +49,6 @@ def readdata(f,head,filestarttime,rc,mce_file,a,mce):
             nc.data_all(h,a,head,filestarttime)
         else :
             nc.data(h,a,head,filestarttime)
-        print a
 
     elif os.stat(netcdfdir + "/mce1_%s.nc" % (filestarttime)).st_size >= 20 * 10**6 :
         a = 0
@@ -62,16 +60,14 @@ def readdata(f,head,filestarttime,rc,mce_file,a,mce):
             nc.data_all(h,a,head,filestarttime)
         else :
             nc.data(h,a,head,filestarttime)
-        print a
 
     else :
         if rc == 's' :
             nc.data_all(h,a,head,filestarttime)
         else :
             nc.data(h,a,head,filestarttime)
-
-        print a
     a = a + 1
+    sys.stdout.flush()
     return filestarttime, mce, a
 # =========================================================================================================
 def read_header(f):
