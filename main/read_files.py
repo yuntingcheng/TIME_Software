@@ -47,6 +47,10 @@ def readdata(f,head,filestarttime,rc,mce_file,a,mce,n):
         filestarttime = datetime.datetime.utcnow()
         filestarttime = filestarttime.isoformat()
         nc.new_file(h.shape, head, filestarttime)
+        if rc == 's' :
+            nc.data_all(h,a,head,filestarttime)
+        else :
+            nc.data(h,a,head,filestarttime)
 
     elif n == 10 :
         n = 0
@@ -54,11 +58,16 @@ def readdata(f,head,filestarttime,rc,mce_file,a,mce,n):
         filestarttime = datetime.datetime.utcnow()
         filestarttime = filestarttime.isoformat()
         nc.new_file(h.shape, head, filestarttime)
+        if rc == 's' :
+            nc.data_all(h,a,head,filestarttime)
+        else :
+            nc.data(h,a,head,filestarttime)
 
-    if rc == 's' :
-        nc.data_all(h,a,head,filestarttime)
     else :
-        nc.data(h,a,head,filestarttime)
+        if rc == 's' :
+            nc.data_all(h,a,head,filestarttime)
+        else :
+            nc.data(h,a,head,filestarttime)
     n = n + 1
     a = a + 1
     return filestarttime, mce
