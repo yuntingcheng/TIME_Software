@@ -31,7 +31,7 @@ def main():
         print 'File Transfer Stopped'
         #subprocess.Popen(['rm temp*'],shell=True)
         #subprocess.Popen(['rm /data/cryo/current_data/temp*'],shell=True)
-        subprocess.Popen(['ssh -T time@time-master.caltech.edu pkill -f /home/time/time-software/main/read_files.py'])
+        subprocess.Popen(["ssh -t time@time-master.caltech.edu 'pkill -f /home/time/time-software/main/read_files.py'""],shell=True)
         print 'File Read Stopped'
         sys.exit()
 
