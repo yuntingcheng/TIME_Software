@@ -4,6 +4,7 @@ import datetime
 import os
 import subprocess
 import time
+import settings as st
 
 def main(observer='VLB', datamode='0', readoutcard='s', framenumber='13500000', datarate='45'):
     netcdfdir = ('/home/time/Desktop/time-data/netcdffiles')
@@ -63,7 +64,8 @@ def startmce(observer, datamode, readoutcard, framenumber, datarate):
         #d = subprocess.Popen(changedatamode2, shell=True)
         #run2 = ["./mce1_run.sh %s %s %s" %(framenumber, readoutcard, frameperfile)]
         #e = subprocess.Popen(run2, shell=True)
-    netcdfcmd = ['python read_files.py %s' %(readoutcard)]
+    st.rc = readoutcard
+    netcdfcmd = ['python read_files.py']
     subprocess.Popen(netcdfcmd, shell=True)
 
 if __name__ == '__main__':
