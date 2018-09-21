@@ -23,7 +23,7 @@ def netcdfdata(rc):
             mce_file = min(files, key = os.path.getctime)
             f = mce_data.SmallMCEFile(mce_file)
             head = read_header(f)
-            filestarttime, mce = readdata(f,head,filestarttime,rc,mce_file,a,mce,n)
+            filestarttime, mce, a, n = readdata(f,head,filestarttime,rc,mce_file,a,mce,n)
             print 'File Read:' , mce_file.replace(dir,'')
         else :
             print 'No More Files'
@@ -70,7 +70,7 @@ def readdata(f,head,filestarttime,rc,mce_file,a,mce,n):
             nc.data(h,a,head,filestarttime)
     n = n + 1
     a = a + 1
-    return filestarttime, mce
+    return filestarttime, mce, a, n
 # =========================================================================================================
 def read_header(f):
     keys = []
