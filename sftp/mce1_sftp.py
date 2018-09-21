@@ -29,8 +29,8 @@ def main():
         end = dt.datetime.utcnow()
     else :
         print 'File Transfer Stopped'
-        subprocess.Popen(['rm temp*'],shell=True)
-        subprocess.Popen(['rm /data/cryo/current_data/temp*'],shell=True)
+        #subprocess.Popen(['rm temp*'],shell=True)
+        #subprocess.Popen(['rm /data/cryo/current_data/temp*'],shell=True)
         sys.exit()
 
 if __name__ == '__main__':

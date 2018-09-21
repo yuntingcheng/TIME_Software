@@ -41,7 +41,7 @@ def readdata(f,head,filestarttime,rc,mce_file,a,mce):
     #     for c in range(h.shape[1]):
     #         d[b][c] = (np.std(h[b][c][:],dtype=float))
 
-    subprocess.Popen(['rm %s' % (mce_file)], shell=True)
+    subprocess.Popen(['rm %s' %(mce_file)], shell=True)
 
     netcdfdir = '/home/time/Desktop/time-data/netcdffiles'
     if a == 0 :
