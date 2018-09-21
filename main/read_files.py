@@ -29,9 +29,11 @@ def netcdfdata(rc):
             print 'File Read: %s' %(mce_file.replace(dir,''))
 
         else :
-            print 'No More Files'
-            subprocess.Popen(['rm /home/time/Desktop/time-data/mce1/temp.run'], shell=True)
-            sys.exit()
+            continue
+    else :
+        print 'No More Files'
+        subprocess.Popen(['rm /home/time/Desktop/time-data/mce1/temp.run'], shell=True)
+        sys.exit()
 
 # ===========================================================================================================================
 def readdata(f,head,filestarttime,rc,mce_file,a,mce):
