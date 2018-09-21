@@ -18,7 +18,8 @@ def netcdfdata(rc):
     dir = '/home/time/Desktop/time-data/mce1/'
     mce = 0
     subprocess.Popen(['ssh -T time@time-mce-1.caltech.edu python /home/time/time-software/sftp/mce1_sftp.py'], shell=True)
-    while True :
+    time.sleep(0.5)
+    while len(os.listdir(dir)) >= 1 :
         files = [dir + x for x in os.listdir(dir) if (x.startswith("temp") and not x.endswith('.run'))]
         if len(files) != 0 :
             mce_file = min(files, key = os.path.getctime)
@@ -28,8 +29,6 @@ def netcdfdata(rc):
             #logging.warning('File Read: %s' %(mce_file.replace(dir,'')))
             print 'File Read: %s' %(mce_file.replace(dir,''))
 
-        else :
-            continue
     else :
         print 'No More Files'
         subprocess.Popen(['rm /home/time/Desktop/time-data/mce1/temp.run'], shell=True)
