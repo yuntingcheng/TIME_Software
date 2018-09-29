@@ -3,7 +3,7 @@ import socket, struct, subprocess
 PORT = 8888
 # I am accepting tel socket packets as server
 tele = []
-on = True
+data_recv = True
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 def main():
     s.bind(('',PORT))
@@ -12,11 +12,11 @@ def main():
 
     unpacker = struct.Struct('d d d d d d d')
     client, info = s.accept()
-    loop(client,unpacker,on)
+    loop(client,unpacker,data_recv)
     return s
 
-def loop(client,unpacker,on):
-    while on == True:
+def loop(client,unpacker,data_recv):
+    while data_recv == True:
         data = client.recv(unpacker.size)
         pa,slew_flag,alt,az,ra,dec,time = unpacker.unpack(data)
         tempfilename = '/home/pilot1/TIME_Software/tempfiles/tempteledata.txt'

@@ -25,6 +25,7 @@ ra = 20 # static
 dec = 20 # static
 loops_deg = 2 #number of loops per degrees = loops_deg
 COLOR = 'black'
+data_send = True
 # -------------------------------------------------------------------------
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 PILOT1_PORT = 8888
@@ -63,7 +64,7 @@ def tel_move(RA,DEC,n,COLOR,s):
 t = [] # to keep track of the last scan, either up or down
 # ----------MOVING UP TO SCANNING POSITION---------------------------------------------------------------------------
 
-while True:
+while data_send = True:
     if slew_flag == 0.0:
         while dec <= (dec_start + 2) :
             dec = dec + track
