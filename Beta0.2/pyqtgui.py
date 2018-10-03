@@ -799,6 +799,7 @@ def main():
     ex = mcegui()
     sys.exit(app.exec_())
 
+#test connected to master
 
 if __name__ == '__main__':
     main()
