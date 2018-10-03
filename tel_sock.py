@@ -64,7 +64,7 @@ def tel_move(RA,DEC,n,COLOR,s):
 t = [] # to keep track of the last scan, either up or down
 # ----------MOVING UP TO SCANNING POSITION---------------------------------------------------------------------------
 
-while data_send = True:
+while data_send == True:
     if slew_flag == 0.0:
         while dec <= (dec_start + 2) :
             dec = dec + track
