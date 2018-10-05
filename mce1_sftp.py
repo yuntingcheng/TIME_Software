@@ -4,6 +4,7 @@ import time
 import shutil
 import sys
 import datetime as dt
+from settings import mode_check
 
 c = 0
 sys.path.append('/home/pilot2/TIME_Software')
@@ -29,7 +30,10 @@ while end - begin < dt.timedelta(seconds=3):
             print("File Doesn't Exist")
     end = dt.datetime.utcnow()
 else :
+    mode_check(False)
+    print('Tel Server Stopped')
     print('File Transfer Stopped')
+
     #subprocess.Popen(['/home/pilot2/anaconda3/bin/python /home/pilot2/TIME_Software/stop_client.py'],shell=True)
     #print('Tel Client Stopped')
     #time.sleep(2.0)
