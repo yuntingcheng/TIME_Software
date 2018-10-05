@@ -14,7 +14,6 @@ def main():
     s.listen(5)
 
     while True:
-        unpacker = struct.Struct('d d d d d d d')
         # establish a connection with client
         client, info = s.accept()
 
@@ -28,6 +27,7 @@ def main():
 def loop(client):
     while True :
         # data received from client
+        unpacker = struct.Struct('d d d d d d d')
         data = client.recv(unpacker.size)
         if not data:
             print('Bye')
