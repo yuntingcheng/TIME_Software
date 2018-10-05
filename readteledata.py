@@ -1,32 +1,49 @@
 import socket, struct, subprocess
+from _thread import *
+import threading
 
-PORT = 8888
 # I am accepting tel socket packets as server
 tele = []
-data_recv = True
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+print_lock = threading.Lock()
+
 def main():
+    PORT = 8888
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind(('',PORT))
     print('Server listening on port %i' %(PORT))
     s.listen(5)
 
-    unpacker = struct.Struct('d d d d d d d')
-    client, info = s.accept()
-    loop(client,unpacker,data_recv)
-    return s
+    while True:
+        unpacker = struct.Struct('d d d d d d d')
+        # establish a connection with client
+        client, info = s.accept()
 
-def loop(client,unpacker,data_recv):
-    while data_recv == True:
+        #lock acquired by client
+        print_lock.acquire()
+        print('Connected to :', addr[0], ':', addr[1])
+        start_new_thread(loop,(client,))
+        #loop(client,unpacker,data_recv,s)
+    s.close()
+
+def loop(client):
+    while True :
+        # data received from client
         data = client.recv(unpacker.size)
+        if not data:
+            print('Bye')
+            # lock released on exit
+            print_lock.release()
+            break
         pa,slew_flag,alt,az,ra,dec,time = unpacker.unpack(data)
         tempfilename = '/home/pilot1/TIME_Software/tempfiles/tempteledata.txt'
         f = open(tempfilename,'a')
+        # write new data to file
         f.write("\n%.06f,%.06f,%.06f,%.06f,%.06f,%.06f" %(pa, slew_flag, alt, az, ra, dec))
         f.close()
-    else :
-        sys.exit()
+    # connection closed
+    client.close()
 
-    #print('Data Received')
+    print('Tel Data Received')
     #print('Tel Server:',pa,slew_flag,alt,az,ra,dec)
 if __name__=='__main__':
     main()

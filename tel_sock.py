@@ -8,6 +8,7 @@ from astropy.time import Time as thetime
 from astropy.coordinates import SkyCoord, EarthLocation, AltAz, Angle, Latitude, Longitude, ICRS, Galactic, FK4, FK5
 from astroplan import Observer
 import socket, struct, threading
+import settings as st
 
 # --------SPEEDS AND PARAMETERS---------------------------------------------
 speeds = [315.0,3615.0] # arcseconds per second, 3600 arcseconds per degree
@@ -33,9 +34,7 @@ PILOT1 = '129.21.172.16' #I'm sending the socket packets to server
 s.connect((PILOT1, PILOT1_PORT))
 #message = 'Hello!'
 
-
-
-def tel_move(RA,DEC,n,COLOR,s):
+def tel_move(RA,DEC,n,COLOR,s,data_send):
     #initialize  and update position coordinates
     location = EarthLocation.from_geodetic(lon =-111.5947*u.deg, lat =31.95844*u.deg, height=2097.024*u.m)
     kittpeak = Observer(location=location, name='kitt peak')
@@ -64,7 +63,13 @@ def tel_move(RA,DEC,n,COLOR,s):
 t = [] # to keep track of the last scan, either up or down
 # ----------MOVING UP TO SCANNING POSITION---------------------------------------------------------------------------
 
-while data_send == True:
+while True:
+    data_send = st.status
+    if data_send == True:
+        continue
+    else :
+        break
+
     if slew_flag == 0.0:
         while dec <= (dec_start + 2) :
             dec = dec + track
@@ -72,7 +77,7 @@ while data_send == True:
                 ra = ra + track
             else :
                 ra = ra - 360.0 + track # keep coordinates realistic, can't go more than 360 degrees around a circle
-            tel_move(ra,dec,n,COLOR,s)
+            tel_move(ra,dec,n,COLOR,s,data_send)
 
             n = n + (1/rate)
             # plt.ion
@@ -95,7 +100,7 @@ while data_send == True:
                 ra = ra + track
             else :
                 ra = ra - 360.0 + track
-            tel_move(ra,dec,n,COLOR,s)
+            tel_move(ra,dec,n,COLOR,s,data_send)
 
             n = n + (1/rate)
             #plt.ion
@@ -116,7 +121,7 @@ while data_send == True:
         while ra <= ra_init + area:
             dec = dec_init + np.sin(loops*(ra-ra_init))
             ra = ra + (speeds[0]/3600.0/rate)
-            tel_move(ra,dec,n,COLOR,s)
+            tel_move(ra,dec,n,COLOR,s,data_send)
             n = n + (1/rate)
             #plt.ion
             #plt.scatter(ra,dec,color='red')
@@ -129,4 +134,6 @@ while data_send == True:
                 slew_flag = 1.0
             if t[len(t)-1] == 1:
                 slew_flag = 0.0
+#---------------------------------------------------------------------------------------------------------------------
+s.close()
 #---------------------------------------------------------------------------------------------------------------------

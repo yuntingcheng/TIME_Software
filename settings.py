@@ -1,5 +1,7 @@
-global s
-s = 0
-
-global ss
-ss = 0
+status = True
+def mode_check(m):
+    if m == True :
+        status = True
+    else :
+        status = False
+    return status
