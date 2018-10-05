@@ -21,11 +21,11 @@ def main(observer='VLB', datamode='0', readoutcard='s', framenumber='13500000', 
         mce_dir = ['mkdir /home/pilot1/Desktop/time-data/mce1']
         subprocess.Popen(mce_dir, shell=True).wait()
 
-    print('Observer: %s' % (observer))
-    print('Datamode: %s' % (datamode))
-    print('Readout Card: %s' % (readoutcard))
-    print('Frame Number: %s' % (framenumber))
-    print('Data Rate: %s' % (datarate))
+    # print('Observer: %s' % (observer))
+    # print('Datamode: %s' % (datamode))
+    # print('Readout Card: %s' % (readoutcard))
+    # print('Frame Number: %s' % (framenumber))
+    # print('Data Rate: %s' % (datarate))
 
     parafile = open('tempfiles/tempparameters.txt', 'w')
     parafile.write(observer+' ')
