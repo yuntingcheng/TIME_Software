@@ -20,7 +20,7 @@ def main():
 
         #lock acquired by client
         print_lock.acquire()
-        print('Connected to :', addr[0], ':', addr[1])
+        print('Connected to :', info[0], ':', info[1])
         start_new_thread(loop,(client,))
         #loop(client,unpacker,data_recv,s)
     s.close()
