@@ -46,6 +46,7 @@ def loop(client,ip,port):
             is_active = False
 
         print('Tel Data Received')
+        print(pa,time)
         tempfilename = '/home/pilot1/TIME_Software/tempfiles/tempteledata.txt'
         f = open(tempfilename,'a')
         # write new data to file
