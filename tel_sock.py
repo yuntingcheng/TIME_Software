@@ -58,6 +58,11 @@ def tel_move(RA,DEC,n,COLOR,s,data_send):
     pa = np.degrees(np.arctan2(sina,cosa))
 
     #s.send(message.encode('utf-8'))
+    if data_send == False :
+        packer = struct.Struct('d d d d d d d')
+        data = packer.pack(1,2,3,4,5,6,7)
+        s.send(data)
+        return s
     packer = struct.Struct('d d d d d d d')
     data = packer.pack(pa,slew_flag,alt,az,ra,dec,othertime.time())
     s.send(data)

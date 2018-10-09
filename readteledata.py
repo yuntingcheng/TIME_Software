@@ -38,18 +38,19 @@ def loop(client,ip,port):
         unpacker = struct.Struct('d d d d d d d')
         data = client.recv(unpacker.size)
         pa,slew_flag,alt,az,ra,dec,time = unpacker.unpack(data)
+
+        if pa = 1 and if time = 7 :
+            print("Client is requesting to quit")
+            client.close()
+            print("Connection " + ip + ":" + port + " closed")
+            is_active = False
+            
         print('Tel Data Received')
         tempfilename = '/home/pilot1/TIME_Software/tempfiles/tempteledata.txt'
         f = open(tempfilename,'a')
         # write new data to file
         f.write("\n%.06f,%.06f,%.06f,%.06f,%.06f,%.06f" %(pa, slew_flag, alt, az, ra, dec))
         f.close()
-
-        if st.status == False :
-                print("Client is requesting to quit")
-                client.close()
-                print("Connection " + ip + ":" + port + " closed")
-                is_active = False
 
     #print('Tel Server:',pa,slew_flag,alt,az,ra,dec)
 if __name__=='__main__':
