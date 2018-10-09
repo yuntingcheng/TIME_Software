@@ -4,4 +4,5 @@ def mode_check(m):
         status = True
     else :
         status = False
+        print('mode check is called false')
     return status

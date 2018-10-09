@@ -66,7 +66,7 @@ t = [] # to keep track of the last scan, either up or down
 # ----------MOVING UP TO SCANNING POSITION---------------------------------------------------------------------------
 data_send = True
 while data_send:
-    print(st.status)
+    data_send = st.status
     if slew_flag == 0.0:
         while dec <= (dec_start + 2) :
             dec = dec + track
