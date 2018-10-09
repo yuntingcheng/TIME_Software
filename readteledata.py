@@ -1,5 +1,5 @@
 import socket, struct, subprocess
-from threading import thread
+from threading import Thread
 import settings as st
 import traceback
 
