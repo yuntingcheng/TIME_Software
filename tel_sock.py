@@ -26,13 +26,15 @@ ra = 20 # static
 dec = 20 # static
 loops_deg = 2 #number of loops per degrees = loops_deg
 COLOR = 'black'
-data_send = True
 # -------------------------------------------------------------------------
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-PILOT1_PORT = 8500
+PILOT1_PORT = 8888
 PILOT1 = '129.21.172.16' #I'm sending the socket packets to server
-s.connect((PILOT1, PILOT1_PORT))
-#message = 'Hello!'
+try:
+    s.connect((PILOT1, PILOT1_PORT))
+except:
+    print("Connection error")
+    sys.exit()
 
 def tel_move(RA,DEC,n,COLOR,s,data_send):
     #initialize  and update position coordinates
@@ -62,16 +64,9 @@ def tel_move(RA,DEC,n,COLOR,s,data_send):
 #-----------------------------------------------------------------------------------------------------------------------
 t = [] # to keep track of the last scan, either up or down
 # ----------MOVING UP TO SCANNING POSITION---------------------------------------------------------------------------
-
-while True:
-    data_send = st.status
-    if data_send == True:
-        continue
-    else :
-        s.close()
-        print("data send has stopped for tel sock")
-        break
-
+data_send = True
+while data_send:
+    print(st.status)
     if slew_flag == 0.0:
         while dec <= (dec_start + 2) :
             dec = dec + track
@@ -136,5 +131,10 @@ while True:
                 slew_flag = 1.0
             if t[len(t)-1] == 1:
                 slew_flag = 0.0
+
+else :
+    print("data send has stopped for tel sock")
+    break
+    sys.exit()
 #---------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------
