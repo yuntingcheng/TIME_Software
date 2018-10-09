@@ -2,13 +2,13 @@ import socket, struct, subprocess
 from threading import Thread
 import settings as st
 import traceback
-
+import sys
 # I am accepting tel socket packets as server
 tele = []
 data_send = True
 
 def main():
-    PORT = 8888
+    PORT = 8500
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     try :
