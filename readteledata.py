@@ -39,12 +39,12 @@ def loop(client,ip,port):
         data = client.recv(unpacker.size)
         pa,slew_flag,alt,az,ra,dec,time = unpacker.unpack(data)
 
-        if pa = 1 and if time = 7 :
+        if pa == 1 and if time == 7 :
             print("Client is requesting to quit")
             client.close()
             print("Connection " + ip + ":" + port + " closed")
             is_active = False
-            
+
         print('Tel Data Received')
         tempfilename = '/home/pilot1/TIME_Software/tempfiles/tempteledata.txt'
         f = open(tempfilename,'a')
