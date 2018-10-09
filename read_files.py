@@ -31,7 +31,7 @@ def netcdfdata(rc):
                 f = mce_data.SmallMCEFile(mce_file)
                 header = read_header(f)
                 #++++++++++++++++++++++++++++++++ TELESCOPE DATA +++++++++++++++++++++++++++++++++++++++++++++++++++
-                if os.stat("file").st_size != 0 :
+                if os.stat("tempfiles/tempteledata.txt").st_size != 0 :
                     pa,slew_flag,alt,az,ra,dec = np.loadtxt('tempfiles/tempteledata.txt',delimiter = ',',unpack=True)
                     t = open('tempfiles/tempteledata.txt','w')
                     t.close()
