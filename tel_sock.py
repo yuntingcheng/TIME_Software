@@ -66,7 +66,10 @@ t = [] # to keep track of the last scan, either up or down
 # ----------MOVING UP TO SCANNING POSITION---------------------------------------------------------------------------
 data_send = True
 while data_send:
-    data_send = st.status
+    with open('tempfiles/data_send.txt') as fp:
+        line = fp.readline()
+        if line == False :
+            data_send = False
     if slew_flag == 0.0:
         while dec <= (dec_start + 2) :
             dec = dec + track
