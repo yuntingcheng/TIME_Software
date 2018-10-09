@@ -68,7 +68,7 @@ t = [] # to keep track of the last scan, either up or down
 # ----------MOVING UP TO SCANNING POSITION---------------------------------------------------------------------------
 data_send = True
 while data_send:
-    with open('tempfiles/data_send.txt') as fp:
+    with open('/home/pilot2/TIME_Software/tempfiles/data_send.txt') as fp:
         line = fp.readline()
         if line == False :
             data_send = False
