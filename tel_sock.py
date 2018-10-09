@@ -28,7 +28,7 @@ loops_deg = 2 #number of loops per degrees = loops_deg
 COLOR = 'black'
 # -------------------------------------------------------------------------
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-PILOT1_PORT = 8888
+PILOT1_PORT = 8500
 PILOT1 = '129.21.172.16' #I'm sending the socket packets to server
 try:
     s.connect((PILOT1, PILOT1_PORT))
