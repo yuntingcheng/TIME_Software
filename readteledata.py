@@ -1,53 +1,55 @@
 import socket, struct, subprocess
-from _thread import *
-import threading
+from threading import thread
 import settings as st
+import traceback
 
 # I am accepting tel socket packets as server
 tele = []
-print_lock = threading.Lock()
 data_send = True
 
 def main():
-    PORT = 8500
+    PORT = 8888
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.bind(('',PORT))
-    print('Server listening on port %i' %(PORT))
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    try :
+        s.bind(('',PORT))
+    except:
+        print("Bind failed. Error : " + str(sys.exc_info()))
+        sys.exit()
     s.listen(5)
 
     while True:
-        data_send = st.status
-        if data_send == True:
-            continue
-        else :
-            s.close()
-            print("data send has stopped")
-            break
         # establish a connection with client
         client, info = s.accept()
+        ip, port = str(info[0]), str(info[1])
         #lock acquired by client
-        print_lock.acquire()
-        print('Connected to :', info[0], ':', info[1])
-        start_new_thread(loop,(client,))
-        #loop(client,unpacker,data_recv,s)
+        try :
+            Thread(target=loop, args=(client, ip, port)).start()
+            print('Connected to :', info[0], ':', info[1])
+        except :
+            print("Thread did not start.")
+            traceback.print_exc()
+    s.close()
 
-def loop(client):
-    # data received from client
-    unpacker = struct.Struct('d d d d d d d')
-    data = client.recv(unpacker.size)
-    if not data:
-        print('Bye')
-        # lock released on exit
-        print_lock.release()
-        # connection closed
-        client.close()
-    pa,slew_flag,alt,az,ra,dec,time = unpacker.unpack(data)
-    print('Tel Data Received')
-    tempfilename = '/home/pilot1/TIME_Software/tempfiles/tempteledata.txt'
-    f = open(tempfilename,'a')
-    # write new data to file
-    f.write("\n%.06f,%.06f,%.06f,%.06f,%.06f,%.06f" %(pa, slew_flag, alt, az, ra, dec))
-    f.close()
+def loop(client,ip,port):
+    is_active = True
+    while is_active :
+        # data received from client
+        unpacker = struct.Struct('d d d d d d d')
+        data = client.recv(unpacker.size)
+        pa,slew_flag,alt,az,ra,dec,time = unpacker.unpack(data)
+        print('Tel Data Received')
+        tempfilename = '/home/pilot1/TIME_Software/tempfiles/tempteledata.txt'
+        f = open(tempfilename,'a')
+        # write new data to file
+        f.write("\n%.06f,%.06f,%.06f,%.06f,%.06f,%.06f" %(pa, slew_flag, alt, az, ra, dec))
+        f.close()
+
+        if st.status == False :
+                print("Client is requesting to quit")
+                client.close()
+                print("Connection " + ip + ":" + port + " closed")
+                is_active = False
 
     #print('Tel Server:',pa,slew_flag,alt,az,ra,dec)
 if __name__=='__main__':
