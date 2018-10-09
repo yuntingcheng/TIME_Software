@@ -8,7 +8,6 @@ from astropy.time import Time as thetime
 from astropy.coordinates import SkyCoord, EarthLocation, AltAz, Angle, Latitude, Longitude, ICRS, Galactic, FK4, FK5
 from astroplan import Observer
 import socket, struct, threading
-import settings as st
 
 # --------SPEEDS AND PARAMETERS---------------------------------------------
 speeds = [315.0,3615.0] # arcseconds per second, 3600 arcseconds per degree
@@ -66,7 +65,8 @@ t = [] # to keep track of the last scan, either up or down
 # ----------MOVING UP TO SCANNING POSITION---------------------------------------------------------------------------
 data_send = True
 while data_send:
-    data_send = st.status
+    from settings import status
+    data_send = status
     if slew_flag == 0.0:
         while dec <= (dec_start + 2) :
             dec = dec + track
