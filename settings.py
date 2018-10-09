@@ -1,3 +1,4 @@
+global status
 status = True
 def mode_check(m):
     if m == True :
