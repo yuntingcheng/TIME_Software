@@ -41,6 +41,8 @@ def netcdfdata(rc):
                     #print(tt)
                 else :
                     print('No Tele Data!')
+                    tel_size = 0
+                    tt = 0
                 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
                 mce, n, filestarttime, tel_size, tt = readdata(f, mce_file, mce, header, n, a, filestarttime, rc, tel_size, tt)
                 print('File Read: %s' %(mce_file.replace(dir,'')))
