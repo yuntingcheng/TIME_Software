@@ -29,7 +29,7 @@ COLOR = 'black'
 data_send = True
 # -------------------------------------------------------------------------
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-PILOT1_PORT = 8888
+PILOT1_PORT = 8555
 PILOT1 = '129.21.172.16' #I'm sending the socket packets to server
 s.connect((PILOT1, PILOT1_PORT))
 #message = 'Hello!'
