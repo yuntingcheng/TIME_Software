@@ -9,6 +9,8 @@ from astropy.coordinates import SkyCoord, EarthLocation, AltAz, Angle, Latitude,
 from astroplan import Observer
 import socket, struct, threading
 import settings as st
+import sys
+sys.path.append('/home/pilot2/TIME_Software')
 
 # --------SPEEDS AND PARAMETERS---------------------------------------------
 speeds = [315.0,3615.0] # arcseconds per second, 3600 arcseconds per degree
