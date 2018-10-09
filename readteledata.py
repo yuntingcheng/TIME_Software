@@ -7,7 +7,7 @@ tele = []
 print_lock = threading.Lock()
 
 def main():
-    PORT = 8555
+    PORT = 8500
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind(('',PORT))
     print('Server listening on port %i' %(PORT))
