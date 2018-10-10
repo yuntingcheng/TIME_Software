@@ -72,13 +72,13 @@ data_send = True
 mode_check(True)
 while data_send:
     file = open('/home/pilot2/TIME_Software/tempfiles/data_send.txt','r')
-        for line in file :
-            if 'False' in line :
-                data_send = False
-                packer = struct.Struct('d d d d d d d')
-                data = packer.pack(1,2,3,4,5,6,7)
-                s.send(data)
-                break
+    for line in file :
+        if 'False' in line :
+            data_send = False
+            packer = struct.Struct('d d d d d d d')
+            data = packer.pack(1,2,3,4,5,6,7)
+            s.send(data)
+            break
 
     if slew_flag == 0.0:
         while dec <= (dec_start + 2) :
