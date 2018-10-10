@@ -75,7 +75,7 @@ data_send = True
 while data_send:
     with open('/home/pilot2/TIME_Software/tempfiles/data_send.txt') as fp:
         line = fp.readline()
-        if line == False :
+        if line == 'False' :
             data_send = False
     if slew_flag == 0.0:
         while dec <= (dec_start + 2) :
