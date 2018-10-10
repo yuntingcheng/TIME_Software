@@ -29,6 +29,9 @@ dec = 20 # static
 loops_deg = 2 #number of loops per degrees = loops_deg
 COLOR = 'black'
 # -------------------------------------------------------------------------
+f = open("/home/pilot2/TIME_Software/tempfiles/data_send.txt",'w')
+f.close()
+
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 PILOT1_PORT = 8500
 PILOT1 = '129.21.172.16' #I'm sending the socket packets to server

@@ -8,12 +8,12 @@ from settings import mode_check
 sys.path.append('/home/pilot2/TIME_Software')
 
 c = 0
-sys.path.append('/home/pilot2/TIME_Software')
 dir = '/data/cryo/current_data/'
 print('------- Starting Data Transfer -------')
 a = 0
 begin = dt.datetime.utcnow()
 end = dt.datetime.utcnow()
+
 while end - begin < dt.timedelta(seconds=3):
     if os.path.exists("/data/cryo/current_data/temp.%0.3i" %(a+1)) :
         mce_file_name = '/data/cryo/current_data/temp.%0.3i' %(a)

@@ -66,7 +66,6 @@ def startmce(observer, datamode, readoutcard, framenumber, datarate):
     f = open('tempfiles/tempteledata.txt','w')
     f.close()
     subprocess.Popen(['ssh -T pilot2@timemce.rit.edu /home/pilot2/anaconda3/bin/python /home/pilot2/TIME_Software/tel_sock.py'], shell=True)
-    print('Tel Server Started')
     subprocess.Popen(['python readteledata.py'],shell=True)
     subprocess.Popen(['python read_files.py %s' %(readoutcard)], shell=True)
 
