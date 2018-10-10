@@ -8,7 +8,7 @@ from astropy.time import Time as thetime
 from astropy.coordinates import SkyCoord, EarthLocation, AltAz, Angle, Latitude, Longitude, ICRS, Galactic, FK4, FK5
 from astroplan import Observer
 import socket, struct, threading
-import settings as st
+from settings import mode_check
 import sys
 sys.path.append('/home/pilot2/TIME_Software')
 
@@ -29,8 +29,7 @@ dec = 20 # static
 loops_deg = 2 #number of loops per degrees = loops_deg
 COLOR = 'black'
 # -------------------------------------------------------------------------
-f = open("/home/pilot2/TIME_Software/tempfiles/data_send.txt",'w')
-f.close()
+mode_check('empty')
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 PILOT1_PORT = 8500
@@ -42,11 +41,6 @@ except:
     sys.exit()
 
 def tel_move(RA,DEC,n,COLOR,s,data_send):
-    if data_send == False :
-        packer = struct.Struct('d d d d d d d')
-        data = packer.pack(1,2,3,4,5,6,7)
-        s.send(data)
-        return s
     #initialize  and update position coordinates
     location = EarthLocation.from_geodetic(lon =-111.5947*u.deg, lat =31.95844*u.deg, height=2097.024*u.m)
     kittpeak = Observer(location=location, name='kitt peak')
@@ -75,17 +69,16 @@ def tel_move(RA,DEC,n,COLOR,s,data_send):
 t = [] # to keep track of the last scan, either up or down
 # ----------MOVING UP TO SCANNING POSITION---------------------------------------------------------------------------
 data_send = True
-f = open('/home/pilot2/TIME_Software/tempfiles/data_send.txt','w')
-f.write("True")
-f.close()
+mode_check(True)
 while data_send:
-    with open('/home/pilot2/TIME_Software/tempfiles/data_send.txt') as fp:
-        line = fp.readline()
-        print(line)
-        if line == 'False' :
-            data_send = False
-            tel_move(ra,dec,n,COLOR,s,data_send)
-            break
+    file = open('/home/pilot2/TIME_Software/tempfiles/data_send.txt','r')
+        for line in file :
+            if 'False' in line :
+                data_send = False
+                packer = struct.Struct('d d d d d d d')
+                data = packer.pack(1,2,3,4,5,6,7)
+                s.send(data)
+                break
 
     if slew_flag == 0.0:
         while dec <= (dec_start + 2) :
