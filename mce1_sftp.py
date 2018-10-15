@@ -6,7 +6,7 @@ import sys
 import datetime as dt
 from settings import mode_check
 sys.path.append('/home/pilot2/TIME_Software')
-
+sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 1) # line buffering
 c = 0
 dir = '/data/cryo/current_data/'
 print('------- Starting Data Transfer -------')
