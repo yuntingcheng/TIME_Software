@@ -4,7 +4,7 @@ import sys, os, subprocess, time, datetime
 import pyqtgraph as pg
 import read_files as rf
 import random as rm
-import netcdf_trial as nc
+import netcdf as nc
 import settings as st
 import socket, struct, threading
 sys.path.append('/data/cryo/current_data')
