@@ -21,23 +21,7 @@ class mcegui(QtGui.QWidget):
 
     #sets all of the variables for mce/graph, deletes old gui_data_test files
     def init_mce(self):
-
-        #tempfiledir = os.path.expanduser('~/Desktop/mce_files')
-        #if os.path.exists(tempfiledir):
-        #    print('Hello!')
-        #else:
-        #    mce_dir = ["mkdir ~/Desktop/mce_files"] #% (self.datamode)]
-        #    subprocess.Popen(mce_dir, shell=True)
-
         self.timeinterval = 1
-        #deleting old gui_data_test files
-        #for i in range(len(os.listdir('tempfiles'))):
-        #    tempfilename = 'tempfiles/gui_data_test%s.nc' % (i)
-        #    tempfile = os.path.exists(tempfilename)
-        #    if tempfile:
-        #        delete_file = ['rm ' + tempfilename]
-        #        subprocess.Popen(delete_file,shell=True)
-        #setting all variables
         self.observer = ''
         self.datamode = ''
         self.readoutcard = ''
@@ -47,7 +31,6 @@ class mcegui(QtGui.QWidget):
         self.currentchannel = 1
         self.row = 1
         self.oldch = 1
-        #self.row
         st.init()
 
     #creates GUI window and calls functions to populate GUI
