@@ -1,13 +1,8 @@
 from pyqtgraph import QtCore, QtGui
 import numpy as np
-import sys
-import datetime
-import os
-import subprocess
-import time
+import sys, os, subprocess, time, datetime
 import pyqtgraph as pg
-import takedata as td
-import takedataall as tda
+import read_files as rf
 import random as rm
 import netcdf_trial as nc
 import settings as st
