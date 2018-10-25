@@ -1,12 +1,11 @@
 from pyqtgraph import QtCore, QtGui
 import numpy as np
-import sys, os, subprocess, time, datetime
+import sys, os, subprocess, time, datetime, socket, struct, threading
 import pyqtgraph as pg
 import read_files as rf
 import random as rm
 import netcdf as nc
 import settings as st
-import socket, struct, threading
 from termcolor import colored
 
 sys.stdout = os.fdopen(sys.stdout.fileno(),'w',1) #line buffering
@@ -187,27 +186,14 @@ class mcegui(QtGui.QWidget):
             parameteroutput.addWidget(self.timeintervaltext)
             parameteroutput.addWidget(self.channeldeletetext)
             parameteroutput.addWidget(self.timestartedtext)
-
             self.grid.addLayout(parameteroutput, 2, 1, 1, 1)
 
             self.channelselection()
-
-            # print('Observer: %s' % (self.observer))
-            # print('Datamode: %s' % (self.datamode))
-            # print('Readout Card: %s' % (self.readoutcard))
-            # print('Frame Number: %s' % (self.framenumber))
-            # print('Data Rate: %s' % (self.datarate))
-            # print('Time Interval: %s' % (self.timeinterval))
-            # print('Delete Old Columns: %s' % (self.channeldelete))
-            print('Time Started: %s' % (self.timestarted))
-
+            print(colored('Time Started: %s' % (self.timestarted),'magenta'))
             self.frameperfile = int((50 * 10 ** 6) / (33 * 90 * int(self.datarate))) #calculation taken from UBC MCE Wiki
-            print('Frame per file: %s' % (self.frameperfile))
-
+            print(colored('Frame per file: %s' % (self.frameperfile),'magenta'))
             self.submitbutton.setEnabled(False)
-
             self.initplot()
-
             #self.inittelescope()
 
     #resets parameter variables after warning box is read
@@ -392,15 +378,8 @@ class mcegui(QtGui.QWidget):
         dec = [float(teledata[5])]
         ra = [float(teledata[4])]
 
-        #print(az, alt)
-
         self.altazgraphdata.addPoints(x=az, y=alt, brush=telecolor)
         self.radecgraphdata.addPoints(x=ra, y=dec, brush=radeccolor)
-
-
-
-
-        #print(teledata)
 
     #creates input to change channel of live graph during operation, also adds
     #input for readout card if reading All readout cards

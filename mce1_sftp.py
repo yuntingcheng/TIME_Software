@@ -1,14 +1,11 @@
-import os
-import subprocess
-import time
-import shutil
-import sys
+import os, subprocess, time, shutil, sys
 import datetime as dt
+from termcolor import colored
 
-c = 0
+sys.stdout = os.fdopen(sys.stdout.fileno(),'w',1) #line buffering
 sys.path.append('/home/pilot2/TIME_Software')
 dir = '/data/cryo/current_data/'
-print('------- Starting Data Transfer -------')
+print(colored('------- Starting Data Transfer -------','green'))
 a = 0
 begin = dt.datetime.utcnow()
 end = dt.datetime.utcnow()
@@ -17,7 +14,6 @@ while end - begin < dt.timedelta(seconds=3):
         mce_file_name = '/data/cryo/current_data/temp.%0.3i' %(a)
         if a == 0:
             subprocess.Popen(['scp', '/data/cryo/current_data/temp.run', 'pilot1@time.rit.edu:/home/pilot1/Desktop/time-data/mce1/temp.run']).wait()
-            #subprocess.Popen(['rm %s' % ('/data/cryo/current_data/temp.run')],shell=True)
         if os.path.exists(mce_file_name):
             subprocess.Popen(['scp', mce_file_name, 'pilot1@time.rit.edu:/home/pilot1/Desktop/time-data/mce1/temp.%0.3i' % (a)]).wait()
             subprocess.Popen(['rm %s' % (mce_file_name)],shell=True)
@@ -29,7 +25,8 @@ while end - begin < dt.timedelta(seconds=3):
             print("File Doesn't Exist")
     end = dt.datetime.utcnow()
 else :
-    print('File Transfer Stopped')
+    print(colored('File Transfer Stopped','red'))
+    subprocess.Popen(['rm /data/cryo/current_data/temp*'],shell=True)
     #subprocess.Popen(['/home/pilot2/anaconda3/bin/python /home/pilot2/TIME_Software/stop_client.py'],shell=True)
     #print('Tel Client Stopped')
     #time.sleep(2.0)
