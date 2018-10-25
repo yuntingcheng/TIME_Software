@@ -7,8 +7,8 @@ import numpy as np
 
 tele = []
 tempfiledir = '/home/pilot1/Desktop/time-data/netcdffiles'
-def new_file(h_size, head, filestarttime):
-    mce = nc.Dataset(tempfiledir + "/mce1_%s.nc" %(filestarttime),"w",format="NETCDF4_CLASSIC")
+def new_file(h_size, head1, head2, filestarttime):
+    mce = nc.Dataset(tempfiledir + "/raw_%s.nc" %(filestarttime),"w",format="NETCDF4_CLASSIC")
 
     # create the gui parameters group
     # guiparams = mce.createGroup('guiparams')
@@ -48,17 +48,25 @@ def new_file(h_size, head, filestarttime):
     global Time
     Time = mce.createVariable('time','S1',('t','date'))
 
-    global Raw_Data_All
-    global Raw_Data
-    Raw_Data = mce.createVariable('raw_data','f8',('t','raw_rows','raw_cols','raw_num'))
-    Raw_Data_All = mce.createVariable('raw_data_all','f8',('t','raw_rows','raw_cols_all','raw_num'))
-    global Rms_Noise_All
-    global Rms_Noise
-    Rms_Noise_All = mce.createVariable('rms_noise_all','f8',('t','rms_rows','rms_cols_all'))
-    Rms_Noise = mce.createVariable('rms_noise','f8',('t','rms_rows','rms_cols'))
+    global MCE0_Raw_Data_All
+    global MCE0_Raw_Data
+    MCE0_Raw_Data = mce.createVariable('mce0_raw_data','f8',('t','raw_rows','raw_cols','raw_num'))
+    MCE0_Raw_Data_All = mce.createVariable('mce0_raw_data_all','f8',('t','raw_rows','raw_cols_all','raw_num'))
 
-    global Header
-    Header = mce.createVariable('header','S1',('t','v','k'))
+    global MCE1_Raw_Data_All
+    global MCE1_Raw_Data
+    MCE1_Raw_Data = mce.createVariable('mce1_raw_data','f8',('t','raw_rows','raw_cols','raw_num'))
+    MCE1_Raw_Data_All = mce.createVariable('mce1_raw_data_all','f8',('t','raw_rows','raw_cols_all','raw_num'))
+
+    # global Rms_Noise_All
+    # global Rms_Noise
+    # Rms_Noise_All = mce.createVariable('rms_noise_all','f8',('t','rms_rows','rms_cols_all'))
+    # Rms_Noise = mce.createVariable('rms_noise','f8',('t','rms_rows','rms_cols'))
+
+    global MCE0_Header
+    MCE0_Header = mce.createVariable('mce0_header','i4',('t','v','k'))
+    global MCE1_Header
+    MCE1_Header = mce.createVariable('mce1_header','i4',('t','v','k'))
 
     global Tel
     Tel = mce.createVariable('tel','f8',('t','tel_len','tel_array'))
@@ -67,7 +75,6 @@ def new_file(h_size, head, filestarttime):
     parafile = open(parafilename, 'r')
     parameters = parafile.readline().strip().split()
 
-    Header._Encoding = 'ascii'
     Observer._Encoding = 'ascii'
     Frames._Encoding = 'ascii'
     Datamode._Encoding = 'ascii'
@@ -83,27 +90,24 @@ def new_file(h_size, head, filestarttime):
     mce.close()
     return mce
 
-def data_all(h,n,head,filestarttime,tel_size,tt):
+def data_all(h1,h2,n,head1,head2,filestarttime):
     mce = nc.Dataset(tempfiledir + "/mce1_%s.nc" %(filestarttime),"a")
     Time[n,:] = np.array([str(now.datetime.utcnow())],dtype='S26')
-    Raw_Data_All[n,:,:,:] = h
-    Rms_Noise_All[n,:,:] = d
-    Tel[n,0:tel_size,:] = tt
-
-    #print Raw_Data_All.shape
-    #new_head = np.array([head],dtype='S15').reshape((2,16))
-    #Header[a,:,:] = new_head
+    MCE0_Raw_Data_All[n,:,:,:] = h1
+    MCE1_Raw_Data_All[n,:,:,:] = h2
+    MCE0_Header[n,:,:] = head1
+    MCE1_Header[n,:,:] = head2
+    #Tel[n,0:tel_size,:] = tt
     # tele = []
     mce.close()
 
-def data(h,d,n,head,filestarttime,tel_size,tt):
+def data(h1,h2,n,head1,head2,filestarttime):
     mce = nc.Dataset(tempfiledir + "/mce1_%s.nc" %(filestarttime),"a")
     Time[n,:] = np.array([str(now.datetime.utcnow())],dtype='S26')
-    Raw_Data[n,:,:,:] = h
-    Rms_Noise[n,:,:] = d
-    Tel[n,0:tel_size,:] = tt
-    #new_head = np.array([head],dtype='S3')
-    #print new_head
-    #Header[a,:,:] = new_head
+    MCE0_Raw_Data[n,:,:,:] = h1
+    MCE1_Raw_Data[n,:,:,:] = h2
+    MCE0_Header[n,:,:] = head1
+    MCE1_Header[n,:,:] = head2
+    #Tel[n,0:tel_size,:] = tt
     # tele = []
     mce.close()

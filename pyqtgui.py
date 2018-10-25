@@ -7,7 +7,11 @@ import random as rm
 import netcdf as nc
 import settings as st
 import socket, struct, threading
+from termcolor import colored
+
+sys.stdout = os.fdopen(sys.stdout.fileno(),'w',1) #line buffering
 sys.path.append('/data/cryo/current_data')
+sys.path.append('home/pilot1/TIME_Software')
 
 
 #class of all components of GUI
@@ -197,7 +201,7 @@ class mcegui(QtGui.QWidget):
             # print('Delete Old Columns: %s' % (self.channeldelete))
             print('Time Started: %s' % (self.timestarted))
 
-            self.frameperfile = int((50 * 10 ** 6) / (33 * 90 * int(self.datarate)))
+            self.frameperfile = int((50 * 10 ** 6) / (33 * 90 * int(self.datarate))) #calculation taken from UBC MCE Wiki
             print('Frame per file: %s' % (self.frameperfile))
 
             self.submitbutton.setEnabled(False)
@@ -218,7 +222,7 @@ class mcegui(QtGui.QWidget):
         self.parametersquit = QtGui.QVBoxLayout()
 
         #creating user input boxes
-        self.enterobserver = QtGui.QLineEdit('JMB')
+        self.enterobserver = QtGui.QLineEdit('VLB')
         self.enterobserver.setMaxLength(3)
         self.enterdatamode = QtGui.QComboBox()
         self.enterdatamode.addItems(['Error', 'Raw', 'Low Pass Filtered', 'Mixed Mode', 'SQ1 Feedback'])
@@ -434,7 +438,7 @@ class mcegui(QtGui.QWidget):
 
     def changerow(self):
         self.row = int(self.selectrow.currentText()) + 1
-        print(self.row)
+        print("Num of Rows:",self.row)
 
     #changes readout card of live graph when user changes readout card
     def changereadoutcard(self):
@@ -487,65 +491,48 @@ class mcegui(QtGui.QWidget):
 
         self.n_files = 8 #len(os.listdir("ssh -T pilot2@timemce.rit.edu:/data/cryo/current_data"))
 
-        print(self.n_files)
+        print("Num of files",self.n_files)
         #----------------------------------------------------------------------------------
         # start the mce1 file system check (rit mce)
-        sftp1 = ['sshpass -p "time-pilot2" ssh -o StrictHostKeyChecking=no\
-            pilot2@timemce.rit.edu ; python /Desktop/mce1_sftp.py']
-        process = subprocess.Popen(sftp1,stdout=subprocess.PIPE, shell=True)
-        proc_stdout = process.communicate()[0].strip()
+        subprocess.Popen(['ssh -T pilot2@timemce.rit.edu python /home/pilot2/TIME_Software/mce1_sftp.py'],shell=True)
+        print(colored('RIT MCE Started'),'green')
+
         #----------------------------------------------------------------------------------
         # start the mce2 file system check (caltech mce)
+        subprocess.Popen(['ssh -T time@time-mce-0.caltech.edu python /home/time/time-software-testing/TIME_Software/sftp/mce0_sftp.py'],shell=True)
+        print(colored('Caltech MCE0 Started','green'))
+        '''
+        THIS WAS THE OLD METHOD TO SSH AND ACTIVATE THE SOFTWARE
+
         sftp2 = ['sshpass -p "CII@zof7" ssh -o StrictHostKeyChecking=no\
             time@time-mce-0.caltech.edu ; python /Desktop/mce2_sftp.py']
         process = subprocess.Popen(sftp2,stdout=subprocess.PIPE, shell=True)
         proc_stdout = process.communicate()[0].strip()
+        '''
         #----------------------------------------------------------------------------------
         #changes commands to start mce if All readout cards are to be read
         if self.readoutcard == 'All':
-            changedatamode1 = ["./mce1_cdm.sh a %s" % (self.datamode)]
-            b = subprocess.Popen(changedatamode1, shell=True)
-            run1 = ["./mce1_run.sh %s a %s" %(self.framenumber, self.frameperfile)]
-            c = subprocess.Popen(run1, shell=True)
-            #changedatamode2 = ["./mce1_cdm.sh %s" % (self.datamode)]
-            #d = subprocess.Popen(changedatamode2, shell=True)
-            #run2 = ["./mce1_run.sh %s a %s" %(self.framenumber, self.frameperfile)]
-            #e = subprocess.Popen(run2, shell=True)
+            # RIT & Caltech MCE Set datamode and run
+            subprocess.Popen(["./mce1_cdm.sh a %s" % (self.datamode)], shell=True)
+            subprocess.Popen(["./mce1_run.sh %s a %s" %(self.framenumber, self.frameperfile)], shell=True)
+
         else:
-            changedatamode1 = ["./mce1_cdm.sh %s %s" % (self.readoutcard, self.datamode)]
-            b = subprocess.Popen(changedatamode1, shell=True)
-            run1 = ["./mce1_run.sh %s %s %s" %(self.framenumber, self.readoutcard, self.frameperfile)]
-            c = subprocess.Popen(run1, shell=True)
-            #changedatamode2 = ["./mce1_cdm.sh %s %s" % (self.readoutcard, self.datamode)]
-            #d = subprocess.Popen(changedatamode2, shell=True)
-            #run2 = ["./mce1_run.sh %s %s %s" %(self.framenumber, self.readoutcard, self.frameperfile)]
-            #e = subprocess.Popen(run2, shell=True)
+            subprocess.Popen(["./mce1_cdm.sh %s %s" % (self.readoutcard, self.datamode)], shell=True)
+            subprocess.Popen(["./mce1_run.sh %s %s %s" %(self.framenumber, self.readoutcard, self.frameperfile)], shell=True)
 
         #initialize time
         self.n_intervals = 1
         self.starttime = datetime.datetime.utcnow()
         self.totaltimeinterval = int(self.timeinterval)
 
-        #create new netCDF4 file
-        #self.mce = nc.new_file(st.n, self.frameperfile)
-
         self.mce = 1
-        #calls takedata or takedata depending on 1 or all readout cards respectfully,
-        #passes variables to let takedata/takedataall correctly parse data and
-        #gets data for graohing back
-        netcdfcmd = ['python run_netcdf.py %s' % (self.n_files)]
-        print(netcdfcmd)
-        self.runnetcdf = subprocess.Popen(netcdfcmd, shell=True)
+        self.runnetcdf = subprocess.Popen(['python read_files.py %s' % (self.n_files)], shell=True)
 
         if self.readoutcard == 'All':
-            self.z, self.allgraphdata, self.mce = tda.takedataall(self.n_intervals, self.currentchannel, self.currentreadoutcard, self.n_files, self.frameperfile, self.mce, \
-            self.row)
-        else:
-            self.z, self.allgraphdata, self.mce = td.takedata(self.n_intervals, self.currentchannel, self.n_files, self.frameperfile, self.mce, self.row)
-
-
+            self.z1, self.z2, self.graphdata1, self.graphdata2, self.mce = rf.netcdfdata(self.currentreadoutcard, self.currentchannel, self.row)
 
         #initalize data list
+        ''' What is this for? '''
         self.data = [0, 0, 0]
 
         #initialize graph GUI item
@@ -585,11 +572,7 @@ class mcegui(QtGui.QWidget):
 
         self.starttime = datetime.datetime.utcnow()
 
-        if self.readoutcard == 'All':
-            self.z, self.allgraphdata, self.mce = tda.takedataall(self.n_intervals, self.currentchannel, self.currentreadoutcard, self.n_files, self.frameperfile, self.mce,\
-            self.row)
-        else:
-            self.z, self.allgraphdata, self.mce = td.takedata(self.n_intervals, self.currentchannel, self.n_files, self.frameperfile, self.mce, self.row)
+        self.z1, self.z2, self.graphdata1, self.graphdata2, self.mce = rf.netcdfdata(self.currentreadoutcard, self.currentchannel, self.row)
 
         self.updateheatmap()
         self.updatekmirrordata()
@@ -599,10 +582,10 @@ class mcegui(QtGui.QWidget):
     #writes and updates data to both live graph and old graph
     def updateplot(self):
         #determines number of updates needed based on how many tempfiles were read
-        #allgraphdata's length is based on the number of tempfiles takedata read
-    	for g in range(len(self.allgraphdata)):
-            #take out data from allgraphdata
-            self.graphdata = self.allgraphdata[g]
+        #graphdata1's length is based on the number of tempfiles read_files read
+    	for g in range(len(self.graphdata1)):
+            #take out data from graphdata1
+            self.graphdata = self.graphdata1[g]
             a = self.graphdata[0]
             ch = self.graphdata[1]
             y = self.graphdata[2][:self.frameperfile]
@@ -695,16 +678,18 @@ class mcegui(QtGui.QWidget):
             self.endtime = datetime.datetime.utcnow()
             self.timetaken = self.endtime - self.starttime
             #if updating multiple intervals, add to n_intervals to keep time in-sync
-            if len(self.allgraphdata) > 1 and g != len(self.allgraphdata) - 1:
+            if len(self.graphdata1) > 1 and g != len(self.graphdata1) - 1:
                 self.n_intervals += 1
             print('Time taken: %s' % (self.timetaken))
 
     #initialize heatmap
     def initheatmap(self):
         #casts z as array for creating heatmap
-        z = np.asarray(self.z)
+        z1 = np.asarray(self.z1)
+        z2 = np.asarray(self.z2)
         #recasting data in z as integers
-        z.astype(int)
+        z1.astype(int)
+        z2.astype(int)
         #creating heatmap, labeling
         self.heatmapplot = pg.PlotItem()
         self.heatmapplot.setLabel('bottom', 'Row')
@@ -715,11 +700,9 @@ class mcegui(QtGui.QWidget):
         self.heatmap.setPredefinedGradient('thermal')
         self.heatmap.setImage(z)
         #changes levels for heatmap to create gradient at depending on the data rate
-        print(z)
-        self.avggrad = int(np.average(z))
-        self.stddevgrad = int(np.std(z))
-        print('heatmap average: %s' % (self.avggrad))
-        print('std dev grad %s' % (self.stddevgrad))
+        print(z1,z2)
+        self.avggrad = int(np.average(z1))
+        self.stddevgrad = int(np.std(z1))
         self.heatmap.setLevels(self.avggrad - (3 * self.stddevgrad), self.avggrad + (3 * self.stddevgrad))
         # if self.frameperfile == 11:
         #     self.heatmap.setLevels(60, 260)
@@ -730,10 +713,12 @@ class mcegui(QtGui.QWidget):
     #updates heatmap
     def updateheatmap(self):
         #casts z as array for creating heatmap
-        z = np.asarray(self.z)
+        z1 = np.asarray(self.z1)
+        z2 = np.asarray(self.z2)
         #recasting data in z as integers
-        z.astype(int)
-        self.heatmap.setImage(z)
+        z1.astype(int)
+        z2.astype(int)
+        self.heatmap.setImage(z1)
         #changes levels for heatmap to create gradient at depending on the data rate
         self.heatmap.setLevels(self.avggrad - (3 * self.stddevgrad), self.avggrad + (3 * self.stddevgrad))
         # if self.frameperfile == 11:
