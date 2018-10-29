@@ -47,8 +47,6 @@ def netcdfdata(rc,ch,row):
 
     else :
         print(colored('No more files!', 'red'))
-        subprocess.Popen(['rm /home/pilot1/Desktop/time_data/mce1/temp*'],shell=True)
-        subprocess.Popen(['rm /home/pilot1/Desktop/time_data/mce2/temp*'],shell=True)
         #subprocess.Popen(['pkill -9 -f readteledata.py'],shell=True)
         #subprocess.Popen(['ssh -T pilot2@timemce.rit.edu pkill -9 -f tel_sock.py'],shell=True)
         #subprocess.Popen(['/home/pilot1/anaconda3/bin/python /home/pilot1/TIME_Software/stop_server.py'],shell=True)
