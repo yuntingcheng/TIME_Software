@@ -478,7 +478,7 @@ class mcegui(QtGui.QWidget):
 
         #----------------------------------------------------------------------------------
         # start the mce2 file system check (caltech mce)
-        subprocess.Popen(['ssh -T time@time-mce-0.caltech.edu python /home/time/time-software-testing/TIME_Software/sftp/mce0_sftp.py'],shell=True)
+        subprocess.Popen(['ssh -T time@time-mce-0.caltech.edu python /home/time/time-software-testing/TIME_Software/sftp/rit_mce0_sftp.py'],shell=True)
         print(colored('Caltech MCE0 Started','green'))
         '''
         THIS WAS THE OLD METHOD TO SSH AND ACTIVATE THE SOFTWARE
