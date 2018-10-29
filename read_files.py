@@ -44,7 +44,6 @@ def netcdfdata(rc,ch,row):
                 a = a + 1
             begin = dt.datetime.utcnow()
         end = dt.datetime.utcnow()
-    return d1, d2, graphdata1, graphdata2, mce
 
     else :
         print(colored('No more files!', 'red'))
@@ -57,7 +56,7 @@ def netcdfdata(rc,ch,row):
         #subprocess.Popen(['ssh -T pilot2@timemce.rit.edu /home/pilot2/anaconda3/bin/python /home/pilot2/TIME_Software/stop_client.py'],shell=True)
         #print('Tel Client Stopped')
         sys.exit()
-
+    return d1, d2, graphdata1, graphdata2, mce
 # ===========================================================================================================================
 def readdata(f1, f2, mce_file1, mce_file2, mce, head1, head2, n, a, filestarttime, rc, ch, row):
     h1 = f1.Read(row_col=True, unfilter='DC').data
