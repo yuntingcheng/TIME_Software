@@ -60,31 +60,21 @@ class mcegui(QtGui.QWidget):
         #stop mce with subprocess
         if self.showmcedata == 'Yes':
             if self.readoutcard == 'All':
-                run1 = ['./mce1_stop.sh s']
-                a = subprocess.Popen(run1, shell=True)
-                #run2 = ['./mce2_stop.sh s']
-                #b = subprocess.Popen(run2, shell=True)
+                subprocess.Popen(['./mce1_stop.sh s'], shell=True)
+                subprocess.Popen(['./mce0_stop.sh s'], shell=True)
+
             else:
-                run1 = ['./mce1_stop.sh %s' %(self.readoutcard)]
-                a = subprocess.Popen(run1, shell=True)
-                #run2 = ['./mce2_stop.sh %s' %(self.readoutcard)']
-                #b = subprocess.Popen(run2, shell=True)
+                subprocess.Popen(['./mce1_stop.sh %s' %(self.readoutcard)], shell=True)
+                subprocess.Popen(['./mce0_stop.sh %s' %(self.readoutcard)], shell=True)
 
             #delete all MCE temp files still in directory
-            deletetemp1 = ['rm /home/pilot1/ssh_stuff/mce1/temp.*']
-            c = subprocess.Popen(deletetemp1, shell=True)
-
-            #deletetemp = ['ssh -T pilot2@timemce.rit.edu "rm /home/pilot2/data/cryo/current_data/temp.*"']
-            #e = subprocess.Popen(deletetemp, shell=True)
-
-            #deletetemp2 = ['rm /home/pilot1/ssh_stuff/mce2/temp.*']
-            #d = subprocess.Popen(deletetemp2, shell=True)
+            subprocess.Popen(['rm /home/pilot1/Desktop/time-data/mce1/temp.*'], shell=True)
+            subprocess.Popen(['rm /home/pilot1/Desktop/time-data/mce2/temp.*'], shell=True)
 
         #self.runtele.terminate()
         self.runnetcdf.terminate()
-
-        runkill = ['./mce1_stop_sftp.sh']
-        kill = subprocess.Popen(runkill, shell=True)
+        subprocess.Popen(['./mce1_stop_sftp.sh'], shell=True)
+        subprocess.Popen(['./mce0_stop_sftp.sh'], shell=True)
 
         #runteleserver = './runteleserver.sh stop'
         #run = subprocess.Popen(runteleserver, shell=True)
@@ -149,9 +139,8 @@ class mcegui(QtGui.QWidget):
             parafile.write(self.timestarted+' ')
             parafile.close()
 
-            #editdatarate = ['mce_cmd -x wb cc data_rate %s' % (self.datarate)]
-            editdatarate = ['./mce1_cdr.sh %s' %(self.datarate)]
-            a = subprocess.call(editdatarate, shell=True)
+            subprocess.Popen(['./mce1_cdr.sh %s' %(self.datarate)], shell=True)
+            subprocess.Popen(['./mce0_cdr.sh %s' %(self.datarate)], shell=True)
 
             parameteroutput = QtGui.QVBoxLayout()
 
@@ -494,10 +483,14 @@ class mcegui(QtGui.QWidget):
             # RIT & Caltech MCE Set datamode and run
             subprocess.Popen(["./mce1_cdm.sh a %s" % (self.datamode)], shell=True)
             subprocess.Popen(["./mce1_run.sh %s a %s" %(self.framenumber, self.frameperfile)], shell=True)
+            subprocess.Popen(["./mce0_cdm.sh a %s" % (self.datamode)], shell=True)
+            subprocess.Popen(["./mce0_run.sh %s a %s" %(self.framenumber, self.frameperfile)], shell=True)
 
         else:
             subprocess.Popen(["./mce1_cdm.sh %s %s" % (self.readoutcard, self.datamode)], shell=True)
             subprocess.Popen(["./mce1_run.sh %s %s %s" %(self.framenumber, self.readoutcard, self.frameperfile)], shell=True)
+            subprocess.Popen(["./mce0_cdm.sh %s %s" % (self.readoutcard, self.datamode)], shell=True)
+            subprocess.Popen(["./mce0_run.sh %s %s %s" %(self.framenumber, self.readoutcard, self.frameperfile)], shell=True)
 
         #initialize time
         self.n_intervals = 1
