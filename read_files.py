@@ -22,7 +22,7 @@ def netcdfdata(rc,ch,row):
         if (mce_file1 and mce_file2):
             files1 = [dir1 + x for x in os.listdir(dir1) if (x.startswith("temp") and not x.endswith('.run'))]
             files2 = [dir2 + x for x in os.listdir(dir2) if (x.startswith("temp") and not x.endswith('.run'))]
-            if (len(files1) and len(files2) != 0:
+            if (len(files1) and len(files2)) != 0:
                 mce_file1 = min(files1, key = os.path.getctime)
                 mce_file2 = min(files2, key = os.path.getctime)
                 f1 = mce_data.SmallMCEFile(mce_file1)
