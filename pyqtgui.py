@@ -12,6 +12,48 @@ sys.stdout = os.fdopen(sys.stdout.fileno(),'w',1) #line buffering
 sys.path.append('/data/cryo/current_data')
 sys.path.append('home/pilot1/TIME_Software')
 
+# class for KMS Emergency
+class kms_estop(QtGui.QWidget):
+    def __init__(self):
+        QtGui.QWidget.__init__(self)
+        style1 = "background-color: red"
+        style2 = "background-color: black"
+        # animation doesn't work for strings but provides an appropriate delay
+        animation = QtCore.QPropertyAnimation(self, 'styleSheet')
+        animation.setDuration(150)
+        state1 = QtCore.QState()
+        state2 = QtCore.QState()
+        state1.assignProperty(self, 'styleSheet', style1)
+        state2.assignProperty(self, 'styleSheet', style2)
+        state1.addTransition(state1.propertiesAssigned, state2)
+        state2.addTransition(state2.propertiesAssigned, state1)
+        self.machine = QtCore.QStateMachine()
+        self.machine.addDefaultAnimation(animation)
+        self.machine.addState(state1)
+        self.machine.addState(state2)
+        self.machine.setInitialState(state1)
+        self.machine.start()
+
+class tel_estop(QtGui.QWidget):
+    def __init__(self):
+        QtGui.QWidget.__init__(self)
+        style1 = "background-color: red"
+        style2 = "background-color: black"
+        # animation doesn't work for strings but provides an appropriate delay
+        animation = QtCore.QPropertyAnimation(self, 'styleSheet')
+        animation.setDuration(150)
+        state1 = QtCore.QState()
+        state2 = QtCore.QState()
+        state1.assignProperty(self, 'styleSheet', style1)
+        state2.assignProperty(self, 'styleSheet', style2)
+        state1.addTransition(state1.propertiesAssigned, state2)
+        state2.addTransition(state2.propertiesAssigned, state1)
+        self.machine = QtCore.QStateMachine()
+        self.machine.addDefaultAnimation(animation)
+        self.machine.addState(state1)
+        self.machine.addState(state2)
+        self.machine.setInitialState(state1)
+        self.machine.start()
 
 #class of all components of GUI
 class mcegui(QtGui.QWidget):
@@ -726,14 +768,26 @@ class mcegui(QtGui.QWidget):
 
         self.fftgraphdata.setData(self.x, self.fftdata)
 
+    def kms_estop_warning(self):
+        self.w = kms_estop()
+        self.w.setGeometry(QRect(100,100,400,200))
+        self.w.setTitle('K-Mirror Emergency Stop!')
+        self.w.setText('The KMS has triggered an emergency stop state. All other systems have been halted')
+        self.w.show()
+
+    def tel_estop_warning(self):
+        self.v = tel_estop()
+        self.v.setGeometry(QRect(100,100,400,200))
+        self.v.setTitle('Telescope Emergency Stop!')
+        self.v.setText('The Telescope has triggered an emergency stop state. All other systems have been halted')
+        self.v.show()
 
 #calls mcegui class to start GUI
 def main():
     app = QtGui.QApplication(sys.argv)
-    app.setApplicationName('MCE TIME Data')
+    app.setApplicationName('TIME Raw Data Visualization Suite')
     ex = mcegui()
     sys.exit(app.exec_())
-
 
 #test changes
 if __name__ == '__main__':
