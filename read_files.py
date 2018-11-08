@@ -137,6 +137,6 @@ def read_header(f):
         value = int(value)
         values.append(value)
     values = np.asarray(values)
-    return head
+    return values
 
 # if __name__ == '__main__':
