@@ -93,7 +93,7 @@ def new_file(h_size, head1, filestarttime):
 
 # def data_all(h1,h2,n,head1,head2,filestarttime):
 def data_all(h1,n,head1,filestarttime):
-    mce = nc.Dataset(tempfiledir + "/mce1_%s.nc" %(filestarttime),"a")
+    mce = nc.Dataset(tempfiledir + "/raw_%s.nc" %(filestarttime),"a")
     Time[n,:] = np.array([str(now.datetime.utcnow())],dtype='S26')
     MCE0_Raw_Data_All[n,:,:,:] = h1
     #MCE1_Raw_Data_All[n,:,:,:] = h2
@@ -105,7 +105,7 @@ def data_all(h1,n,head1,filestarttime):
 
 # def data(h1,h2,n,head1,head2,filestarttime):
 def data(h1,n,head1,filestarttime):
-    mce = nc.Dataset(tempfiledir + "/mce1_%s.nc" %(filestarttime),"a")
+    mce = nc.Dataset(tempfiledir + "/raw_%s.nc" %(filestarttime),"a")
     Time[n,:] = np.array([str(now.datetime.utcnow())],dtype='S26')
     MCE0_Raw_Data[n,:,:,:] = h1
     #MCE1_Raw_Data[n,:,:,:] = h2
