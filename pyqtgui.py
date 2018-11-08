@@ -169,7 +169,7 @@ class mcegui(QtGui.QWidget):
             self.parameterwarning.exec_()
         elif self.showmcedata == 'No':
             self.submitbutton.setEnabled(False)
-            self.inittelescope()
+            #self.inittelescope()
         else:
             parafile = open('tempfiles/tempparameters.txt', 'w')
             parafile.write(self.observer+' ')
@@ -225,6 +225,8 @@ class mcegui(QtGui.QWidget):
             self.frameperfile = int((50 * 10 ** 6) / (33 * 90 * int(self.datarate))) #calculation taken from UBC MCE Wiki
             print(colored('Frame per file: %s' % (self.frameperfile),'magenta'))
             self.submitbutton.setEnabled(False)
+
+            print(colored('Readout Card : %s', %(self.readoutcard),'magenta'))
             self.initplot()
             #self.inittelescope()
 
@@ -502,7 +504,7 @@ class mcegui(QtGui.QWidget):
 
         self.n_files = 8 #len(os.listdir("ssh -T pilot2@timemce.rit.edu:/data/cryo/current_data"))
 
-        print("Num of files",self.n_files)
+        print(colored("Num of files %s" %(self.n_files),'magenta'))
         #----------------------------------------------------------------------------------
         # start the mce1 file system check (rit mce)
 
@@ -526,6 +528,10 @@ class mcegui(QtGui.QWidget):
             subprocess.Popen(["./mce1_run.sh %s a %s" %(self.framenumber, self.frameperfile)], shell=True)
             #subprocess.Popen(["./mce0_cdm.sh a %s" % (self.datamode)], shell=True)
             #subprocess.Popen(["./mce0_run.sh %s a %s" %(self.framenumber, self.frameperfile)], shell=True)
+            time.sleep(2.0)
+            # self.z1, self.z2, self.graphdata1, self.graphdata2, self.mce = rf.netcdfdata(self.currentreadoutcard, self.currentchannel, self.row)
+            print(colored('init plot is trying to start read_files','red'))
+            self.z1, self.graphdata1, self.mce = rf.netcdfdata(self.readoutcard, self.currentchannel, self.row)
 
         else:
             subprocess.Popen(["./mce1_cdm.sh %s %s" % (self.readoutcard, self.datamode)], shell=True)
@@ -534,7 +540,7 @@ class mcegui(QtGui.QWidget):
             #subprocess.Popen(["./mce0_run.sh %s %s %s" %(self.framenumber, self.readoutcard, self.frameperfile)], shell=True)
 
         subprocess.Popen(['ssh -T pilot2@timemce.rit.edu python /home/pilot2/TIME_Software/mce1_sftp.py'],shell=True)
-        print(colored('RIT MCE Started'),'green')
+        print(colored('RIT MCE Started','green'))
 
         #initialize time
         self.n_intervals = 1
@@ -543,12 +549,7 @@ class mcegui(QtGui.QWidget):
 
         self.mce = 1
         #self.runnetcdf = subprocess.Popen(['python read_files.py %s' % (self.n_files)], shell=True)
-        subprocess.Popen(['python /home/pilot1/TIME_Software/read_files.py'], shell=True)
-
-        if self.readoutcard == 'All':
-            # self.z1, self.z2, self.graphdata1, self.graphdata2, self.mce = rf.netcdfdata(self.currentreadoutcard, self.currentchannel, self.row)
-            print(colored('init plot is trying to start read_files','red'))
-            self.z1, self.graphdata1, self.mce = rf.netcdfdata(self.readoutcard, self.currentchannel, self.row)
+        #subprocess.Popen(['python /home/pilot1/TIME_Software/read_files.py'], shell=True)
 
         #initalize data list
         ''' What is this for? '''
@@ -581,7 +582,7 @@ class mcegui(QtGui.QWidget):
 
         #timer for updating graph
         self.timer = pg.QtCore.QTimer()
-        self.timer.timeout.connect(self.moveplot)
+        self.timer.timeout.connect(self.moveplot())
         self.timer.start(1000)
 
     #updates 'clock' (n_intervals) and recalls takedata/takedataall, also calls
