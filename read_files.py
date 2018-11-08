@@ -83,7 +83,7 @@ def readdata(f1, mce_file1, mce, head1, n, a, filestarttime, rc, ch, row):
     netcdfdir = '/home/pilot1/Desktop/time-data/netcdffiles'
 
     if n == 0:
-        filestarttime = datetime.datetime.utcnow()
+        filestarttime = dt.datetime.utcnow()
         filestarttime = filestarttime.isoformat()
         print('------------ New File -------------')
         #mce = nc.new_file(h1.shape, head1, head2, filestarttime)
