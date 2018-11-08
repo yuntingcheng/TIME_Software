@@ -536,6 +536,9 @@ class mcegui(QtGui.QWidget):
         else:
             subprocess.Popen(["./mce1_cdm.sh %s %s" % (self.readoutcard, self.datamode)], shell=True)
             subprocess.Popen(["./mce1_run.sh %s %s %s" %(self.framenumber, self.readoutcard, self.frameperfile)], shell=True)
+            time.sleep(2.0)
+            print(colored('init plot is trying to start read_files','red'))
+            self.z1, self.graphdata1, self.mce = rf.netcdfdata(self.readoutcard, self.currentchannel, self.row)
             #subprocess.Popen(["./mce0_cdm.sh %s %s" % (self.readoutcard, self.datamode)], shell=True)
             #subprocess.Popen(["./mce0_run.sh %s %s %s" %(self.framenumber, self.readoutcard, self.frameperfile)], shell=True)
 
