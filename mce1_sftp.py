@@ -7,6 +7,7 @@ sys.path.append('/home/pilot2/TIME_Software')
 dir = '/data/cryo/current_data/'
 #print(colored('------- Starting Data Transfer -------','green'))
 print('----------------Starting Data Transfer------------------')
+sys.stdout.flush()
 a = 0
 begin = dt.datetime.utcnow()
 end = dt.datetime.utcnow()
@@ -19,6 +20,7 @@ while end - begin < dt.timedelta(seconds=3):
             subprocess.Popen(['scp', mce_file_name, 'pilot1@time.rit.edu:/home/pilot1/Desktop/time-data/mce1/temp.%0.3i' % (a)]).wait()
             subprocess.Popen(['rm %s' % (mce_file_name)],shell=True)
             print('File Transfered :', mce_file_name.replace(dir,''))
+            sys.stdout.flush()
             a += 1
             begin = dt.datetime.utcnow()
 
@@ -29,6 +31,7 @@ while end - begin < dt.timedelta(seconds=3):
 else :
     #print(colored('File Transfer Stopped','red'))
     print('File Transfer Stopped')
+    sys.stdout.flush()
     subprocess.Popen(['rm /data/cryo/current_data/temp*'],shell=True)
     #subprocess.Popen(['/home/pilot2/anaconda3/bin/python /home/pilot2/TIME_Software/stop_client.py'],shell=True)
     #print('Tel Client Stopped')

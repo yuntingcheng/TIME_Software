@@ -7,6 +7,8 @@ from termcolor import colored
 
 sys.path.append('/home/pilot1/TIME_Software')
 def netcdfdata(rc,ch,row):
+    print('Read files has started')
+    sys.stdout.flush()
     a = 0
     mce = 0
     n = 0
@@ -20,10 +22,12 @@ def netcdfdata(rc,ch,row):
         if mce_file1 :
             files1 = [dir1 + x for x in os.listdir(dir1) if (x.startswith("temp") and not x.endswith('.run'))]
             print(colored('First if statement passed'))
+            sys.stdout.flush()
             #files2 = [dir2 + x for x in os.listdir(dir2) if (x.startswith("temp") and not x.endswith('.run'))]
             if (len(files1) and len(files2)) != 0:
                 mce_file1 = min(files1, key = os.path.getctime)
                 print(colored('Second if statement passed'))
+                sys.stdout.flush()
                 #mce_file2 = min(files2, key = os.path.getctime)
                 f1 = mce_data.SmallMCEFile(mce_file1)
                 #f2 = mce_data.SmallMCEFile(mce_file2)
@@ -135,5 +139,3 @@ def read_header(f):
     return head
 
 # if __name__ == '__main__':
-#     print(sys.argv)
-#     netcdfdata(1,1,1)
