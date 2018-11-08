@@ -226,7 +226,7 @@ class mcegui(QtGui.QWidget):
             print(colored('Frame per file: %s' % (self.frameperfile),'magenta'))
             self.submitbutton.setEnabled(False)
 
-            print(colored('Readout Card : %s', %(self.readoutcard),'magenta'))
+            print(colored('Readout Card : %s' %(self.readoutcard),'magenta'))
             self.initplot()
             #self.inittelescope()
 
