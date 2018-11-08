@@ -95,7 +95,7 @@ def readdata(f1, mce_file1, mce, head1, n, a, filestarttime, rc, ch, row):
             #nc.data(h1,h2,n,head1,head2,filestarttime)
             nc.data(h1,n,head1,filestarttime)
 
-    elif os.stat(netcdfdir + "/mce1_%s.nc" % (filestarttime)).st_size >= 20 * 10**6:
+    elif os.stat(netcdfdir + "/raw_%s.nc" % (filestarttime)).st_size >= 20 * 10**6:
         n = 0
         print('----------- New File ------------')
         filestarttime = datetime.datetime.utcnow()
