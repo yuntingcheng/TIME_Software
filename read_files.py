@@ -19,9 +19,11 @@ def netcdfdata(rc,ch,row):
         #if (mce_file1 and mce_file2):
         if mce_file1 :
             files1 = [dir1 + x for x in os.listdir(dir1) if (x.startswith("temp") and not x.endswith('.run'))]
+            print(colored('First if statement passed'))
             #files2 = [dir2 + x for x in os.listdir(dir2) if (x.startswith("temp") and not x.endswith('.run'))]
             if (len(files1) and len(files2)) != 0:
                 mce_file1 = min(files1, key = os.path.getctime)
+                print(colored('Second if statement passed'))
                 #mce_file2 = min(files2, key = os.path.getctime)
                 f1 = mce_data.SmallMCEFile(mce_file1)
                 #f2 = mce_data.SmallMCEFile(mce_file2)
@@ -41,8 +43,10 @@ def netcdfdata(rc,ch,row):
                 #mce,n,filestarttime,d1,d2,graphdata1,graphdata2 = readdata(f1,f2,mce_file1,mce_file2,mce,head1,head2,n,a,filestarttime,rc,ch,row)
                 print(colored('File Read: %s , %s' %(mce_file1.replace(dir,''),mce_file2.replace(dir,''))),'yellow')
                 a = a + 1
+                sys.stdout.flush()
         else :
-            break
+            print('waiting for new files')
+            time.sleep(1.0)
     print(colored(graphdata1,'red'))
     return d1, graphdata1, mce
     #return d1, d2, graphdata1, graphdata2, mce
@@ -130,5 +134,6 @@ def read_header(f):
     values = np.asarray(values)
     return head
 
-if __name__ == '__main__':
-    netcdfdata(sys.argv[1],sys.argv[2],sys.argv[3])
+# if __name__ == '__main__':
+#     print(sys.argv)
+#     netcdfdata(1,1,1)

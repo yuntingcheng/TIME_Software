@@ -25,6 +25,7 @@ while end - begin < dt.timedelta(seconds=3):
         else :
             print("File Doesn't Exist")
     end = dt.datetime.utcnow()
+    sys.stdout.flush()
 else :
     #print(colored('File Transfer Stopped','red'))
     print('File Transfer Stopped')

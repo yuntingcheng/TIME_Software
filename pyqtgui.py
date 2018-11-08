@@ -548,7 +548,7 @@ class mcegui(QtGui.QWidget):
         if self.readoutcard == 'All':
             # self.z1, self.z2, self.graphdata1, self.graphdata2, self.mce = rf.netcdfdata(self.currentreadoutcard, self.currentchannel, self.row)
             print(colored('init plot is trying to start read_files','red'))
-            self.z1, self.graphdata1, self.mce = rf.netcdfdata(self.currentreadoutcard, self.currentchannel, self.row)
+            self.z1, self.graphdata1, self.mce = rf.netcdfdata(self.readoutcard, self.currentchannel, self.row)
 
         #initalize data list
         ''' What is this for? '''
@@ -592,7 +592,7 @@ class mcegui(QtGui.QWidget):
         self.starttime = datetime.datetime.utcnow()
 
         #self.z1, self.z2, self.graphdata1, self.graphdata2, self.mce = rf.netcdfdata(self.currentreadoutcard, self.currentchannel, self.row)
-        self.z1, self.graphdata1,  self.mce = rf.netcdfdata(self.currentreadoutcard, self.currentchannel, self.row)
+        self.z1, self.graphdata1,  self.mce = rf.netcdfdata(self.readoutcard, self.currentchannel, self.row)
 
         self.updateheatmap()
         #self.updatekmirrordata()
