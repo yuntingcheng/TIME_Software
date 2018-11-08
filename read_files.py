@@ -51,6 +51,7 @@ def netcdfdata(rc,ch,row):
                 print(colored('File Read: %s' %(mce_file1.replace(dir1,'')),'yellow'))
                 a = a + 1
                 sys.stdout.flush()
+            break
         else :
             pass
     print(colored(graphdata1,'red'))
