@@ -512,6 +512,8 @@ class mcegui(QtGui.QWidget):
         # start the mce2 file system check (caltech mce)
         #subprocess.Popen(['ssh -T time@time-mce-0.caltech.edu python /home/time/time-software-testing/TIME_Software/sftp/rit_mce0_sftp.py'],shell=True)
         #print(colored('Caltech MCE0 Started','green'))
+        subprocess.Popen(['ssh -T pilot2@timemce.rit.edu python /home/pilot2/TIME_Software/mce1_sftp.py'],shell=True)
+        print(colored('RIT MCE Started','green'))
         '''
         THIS WAS THE OLD METHOD TO SSH AND ACTIVATE THE SOFTWARE
 
@@ -541,9 +543,6 @@ class mcegui(QtGui.QWidget):
             self.z1, self.graphdata1, self.mce = rf.netcdfdata(self.readoutcard, self.currentchannel, self.row)
             #subprocess.Popen(["./mce0_cdm.sh %s %s" % (self.readoutcard, self.datamode)], shell=True)
             #subprocess.Popen(["./mce0_run.sh %s %s %s" %(self.framenumber, self.readoutcard, self.frameperfile)], shell=True)
-
-        subprocess.Popen(['ssh -T pilot2@timemce.rit.edu python /home/pilot2/TIME_Software/mce1_sftp.py'],shell=True)
-        print(colored('RIT MCE Started','green'))
 
         #initialize time
         self.n_intervals = 1
