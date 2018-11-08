@@ -103,11 +103,11 @@ class mcegui(QtGui.QWidget):
         if self.showmcedata == 'Yes':
             if self.readoutcard == 'All':
                 subprocess.Popen(['./mce1_stop.sh s'], shell=True)
-                subprocess.Popen(['./mce0_stop.sh s'], shell=True)
+                #subprocess.Popen(['./mce0_stop.sh s'], shell=True)
 
             else:
                 subprocess.Popen(['./mce1_stop.sh %s' %(self.readoutcard)], shell=True)
-                subprocess.Popen(['./mce0_stop.sh %s' %(self.readoutcard)], shell=True)
+                #subprocess.Popen(['./mce0_stop.sh %s' %(self.readoutcard)], shell=True)
 
             #delete all MCE temp files still in directory
             subprocess.Popen(['rm /home/pilot1/Desktop/time-data/mce1/temp.*'], shell=True)
@@ -116,7 +116,7 @@ class mcegui(QtGui.QWidget):
         #self.runtele.terminate()
         self.runnetcdf.terminate()
         subprocess.Popen(['./mce1_stop_sftp.sh'], shell=True)
-        subprocess.Popen(['./mce0_stop_sftp.sh'], shell=True)
+        #subprocess.Popen(['./mce0_stop_sftp.sh'], shell=True)
 
         #runteleserver = './runteleserver.sh stop'
         #run = subprocess.Popen(runteleserver, shell=True)
@@ -182,7 +182,7 @@ class mcegui(QtGui.QWidget):
             parafile.close()
 
             subprocess.Popen(['./mce1_cdr.sh %s' %(self.datarate)], shell=True)
-            subprocess.Popen(['./mce0_cdr.sh %s' %(self.datarate)], shell=True)
+            #subprocess.Popen(['./mce0_cdr.sh %s' %(self.datarate)], shell=True)
 
             parameteroutput = QtGui.QVBoxLayout()
 
@@ -509,8 +509,8 @@ class mcegui(QtGui.QWidget):
 
         #----------------------------------------------------------------------------------
         # start the mce2 file system check (caltech mce)
-        subprocess.Popen(['ssh -T time@time-mce-0.caltech.edu python /home/time/time-software-testing/TIME_Software/sftp/rit_mce0_sftp.py'],shell=True)
-        print(colored('Caltech MCE0 Started','green'))
+        #subprocess.Popen(['ssh -T time@time-mce-0.caltech.edu python /home/time/time-software-testing/TIME_Software/sftp/rit_mce0_sftp.py'],shell=True)
+        #print(colored('Caltech MCE0 Started','green'))
         '''
         THIS WAS THE OLD METHOD TO SSH AND ACTIVATE THE SOFTWARE
 
@@ -525,14 +525,14 @@ class mcegui(QtGui.QWidget):
             # RIT & Caltech MCE Set datamode and run
             subprocess.Popen(["./mce1_cdm.sh a %s" % (self.datamode)], shell=True)
             subprocess.Popen(["./mce1_run.sh %s a %s" %(self.framenumber, self.frameperfile)], shell=True)
-            subprocess.Popen(["./mce0_cdm.sh a %s" % (self.datamode)], shell=True)
-            subprocess.Popen(["./mce0_run.sh %s a %s" %(self.framenumber, self.frameperfile)], shell=True)
+            #subprocess.Popen(["./mce0_cdm.sh a %s" % (self.datamode)], shell=True)
+            #subprocess.Popen(["./mce0_run.sh %s a %s" %(self.framenumber, self.frameperfile)], shell=True)
 
         else:
             subprocess.Popen(["./mce1_cdm.sh %s %s" % (self.readoutcard, self.datamode)], shell=True)
             subprocess.Popen(["./mce1_run.sh %s %s %s" %(self.framenumber, self.readoutcard, self.frameperfile)], shell=True)
-            subprocess.Popen(["./mce0_cdm.sh %s %s" % (self.readoutcard, self.datamode)], shell=True)
-            subprocess.Popen(["./mce0_run.sh %s %s %s" %(self.framenumber, self.readoutcard, self.frameperfile)], shell=True)
+            #subprocess.Popen(["./mce0_cdm.sh %s %s" % (self.readoutcard, self.datamode)], shell=True)
+            #subprocess.Popen(["./mce0_run.sh %s %s %s" %(self.framenumber, self.readoutcard, self.frameperfile)], shell=True)
 
         #initialize time
         self.n_intervals = 1
@@ -569,12 +569,13 @@ class mcegui(QtGui.QWidget):
         self.oldmcegraph.addItem(self.oldmcegraphdata)
 
         #call other init functions and begin updating graph
-        self.initheatmap()
-        self.initkmirrordata()
-        self.initfftgraph()
+        #self.initheatmap()
+        #self.initkmirrordata()
+        #self.initfftgraph()
         self.updateplot()
 
         #timer for updating graph
+        ''' maybe it's calling moveplot too quickly before data is ready? '''
         self.timer = pg.QtCore.QTimer()
         self.timer.timeout.connect(self.moveplot)
         self.timer.start(1000)
@@ -586,11 +587,12 @@ class mcegui(QtGui.QWidget):
 
         self.starttime = datetime.datetime.utcnow()
 
-        self.z1, self.z2, self.graphdata1, self.graphdata2, self.mce = rf.netcdfdata(self.currentreadoutcard, self.currentchannel, self.row)
+        #self.z1, self.z2, self.graphdata1, self.graphdata2, self.mce = rf.netcdfdata(self.currentreadoutcard, self.currentchannel, self.row)
+        self.z1, self.graphdata1,  self.mce = rf.netcdfdata(self.currentreadoutcard, self.currentchannel, self.row)
 
         self.updateheatmap()
-        self.updatekmirrordata()
-        self.updatefftgraph()
+        #self.updatekmirrordata()
+        #self.updatefftgraph()
         self.updateplot()
 
     #writes and updates data to both live graph and old graph
@@ -700,10 +702,10 @@ class mcegui(QtGui.QWidget):
     def initheatmap(self):
         #casts z as array for creating heatmap
         z1 = np.asarray(self.z1)
-        z2 = np.asarray(self.z2)
+        #z2 = np.asarray(self.z2)
         #recasting data in z as integers
         z1.astype(int)
-        z2.astype(int)
+        #z2.astype(int)
         #creating heatmap, labeling
         self.heatmapplot = pg.PlotItem()
         self.heatmapplot.setLabel('bottom', 'Row')
@@ -714,7 +716,7 @@ class mcegui(QtGui.QWidget):
         self.heatmap.setPredefinedGradient('thermal')
         self.heatmap.setImage(z)
         #changes levels for heatmap to create gradient at depending on the data rate
-        print(z1,z2)
+        print(z1)
         self.avggrad = int(np.average(z1))
         self.stddevgrad = int(np.std(z1))
         self.heatmap.setLevels(self.avggrad - (3 * self.stddevgrad), self.avggrad + (3 * self.stddevgrad))
@@ -728,10 +730,10 @@ class mcegui(QtGui.QWidget):
     def updateheatmap(self):
         #casts z as array for creating heatmap
         z1 = np.asarray(self.z1)
-        z2 = np.asarray(self.z2)
+        #z2 = np.asarray(self.z2)
         #recasting data in z as integers
         z1.astype(int)
-        z2.astype(int)
+        #z2.astype(int)
         self.heatmap.setImage(z1)
         #changes levels for heatmap to create gradient at depending on the data rate
         self.heatmap.setLevels(self.avggrad - (3 * self.stddevgrad), self.avggrad + (3 * self.stddevgrad))
