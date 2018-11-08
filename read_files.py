@@ -15,6 +15,7 @@ def netcdfdata(rc,ch,row):
     filestarttime = 0
     dir1 = '/home/pilot1/Desktop/time-data/mce1/'
     #dir2 = '/home/pilot1/Desktop/time-data/mce2/'
+
     while True:
         mce_file1 = os.path.exists(dir1 + 'temp.%0.3i' %(a+1))
         #mce_file2 = os.path.exists(dir2 + 'temp.%0.3i' %(a+1))
@@ -47,12 +48,9 @@ def netcdfdata(rc,ch,row):
                 #mce, n, filestarttime, tel_size, tt = readdata(f, mce_file, mce, header, n, a, filestarttime, rc, tel_size, tt)
                 #mce,n,filestarttime,d1,d2,graphdata1,graphdata2 = readdata(f1,f2,mce_file1,mce_file2,mce,head1,head2,n,a,filestarttime,rc,ch,row)
                 # print(colored('File Read: %s , %s' %(mce_file1.replace(dir,''),mce_file2.replace(dir,''))),'yellow')
-                print(colored('File Read: %s' %(mce_file1.replace(dir1,''))),'yellow')
+                print(colored('File Read: %s' %(mce_file1.replace(dir1,'')),'yellow'))
                 a = a + 1
                 sys.stdout.flush()
-        else :
-            print('waiting for new files')
-            time.sleep(1.0)
     print(colored(graphdata1,'red'))
     return d1, graphdata1, mce
     #return d1, d2, graphdata1, graphdata2, mce

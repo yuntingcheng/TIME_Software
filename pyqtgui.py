@@ -530,15 +530,12 @@ class mcegui(QtGui.QWidget):
             subprocess.Popen(["./mce1_run.sh %s a %s" %(self.framenumber, self.frameperfile)], shell=True)
             #subprocess.Popen(["./mce0_cdm.sh a %s" % (self.datamode)], shell=True)
             #subprocess.Popen(["./mce0_run.sh %s a %s" %(self.framenumber, self.frameperfile)], shell=True)
-            time.sleep(2.0)
             # self.z1, self.z2, self.graphdata1, self.graphdata2, self.mce = rf.netcdfdata(self.currentreadoutcard, self.currentchannel, self.row)
-            print(colored('init plot is trying to start read_files','red'))
             self.z1, self.graphdata1, self.mce = rf.netcdfdata(self.readoutcard, self.currentchannel, self.row)
 
         else:
             subprocess.Popen(["./mce1_cdm.sh %s %s" % (self.readoutcard, self.datamode)], shell=True)
             subprocess.Popen(["./mce1_run.sh %s %s %s" %(self.framenumber, self.readoutcard, self.frameperfile)], shell=True)
-            time.sleep(2.0)
             print(colored('init plot is trying to start read_files','red'))
             self.z1, self.graphdata1, self.mce = rf.netcdfdata(self.readoutcard, self.currentchannel, self.row)
             #subprocess.Popen(["./mce0_cdm.sh %s %s" % (self.readoutcard, self.datamode)], shell=True)
@@ -550,8 +547,6 @@ class mcegui(QtGui.QWidget):
         self.totaltimeinterval = int(self.timeinterval)
 
         self.mce = 1
-        #self.runnetcdf = subprocess.Popen(['python read_files.py %s' % (self.n_files)], shell=True)
-        #subprocess.Popen(['python /home/pilot1/TIME_Software/read_files.py'], shell=True)
 
         #initalize data list
         ''' What is this for? '''
@@ -583,12 +578,14 @@ class mcegui(QtGui.QWidget):
         self.updateplot()
 
         #timer for updating graph
+        '''It looks like this is what repeatedly calls moveplot(), which
+            repeatedly calls updateplot(). Meaning read_files.py shouldn't be
+            stuck in a loop for forever or it will never get to these things.'''
         self.timer = pg.QtCore.QTimer()
         self.timer.timeout.connect(self.moveplot())
         self.timer.start(1000)
 
-    #updates 'clock' (n_intervals) and recalls takedata/takedataall, also calls
-    #update functions
+    '''updates 'clock' (n_intervals) and re-calls read_files.py, also calls update functions'''
     def moveplot(self):
         self.n_intervals+=int(1)
 
