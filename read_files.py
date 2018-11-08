@@ -24,7 +24,8 @@ def netcdfdata(rc,ch,row):
             print(colored('First if statement passed'))
             sys.stdout.flush()
             #files2 = [dir2 + x for x in os.listdir(dir2) if (x.startswith("temp") and not x.endswith('.run'))]
-            if (len(files1) and len(files2)) != 0:
+            # if (len(files1) and len(files2)) != 0:
+            if len(files1) != 0:
                 mce_file1 = min(files1, key = os.path.getctime)
                 print(colored('Second if statement passed'))
                 sys.stdout.flush()
