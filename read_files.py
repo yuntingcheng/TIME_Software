@@ -3,7 +3,7 @@ import os, sys, time, logging, mce_data, subprocess
 import netcdf as nc
 import datetime as dt
 from termcolor import colored
-sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 1) # line buffering
+#sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 1) # line buffering
 
 sys.path.append('/home/pilot1/TIME_Software')
 def netcdfdata(rc,ch,row):
@@ -13,10 +13,7 @@ def netcdfdata(rc,ch,row):
     filestarttime = 0
     dir1 = '/home/pilot1/Desktop/time-data/mce1/'
     #dir2 = '/home/pilot1/Desktop/time-data/mce2/'
-
-    begin = dt.datetime.utcnow()
-    end = dt.datetime.utcnow()
-    while end - begin < dt.timedelta(seconds=5):
+    while True:
         mce_file1 = os.path.exists(dir1 + 'temp.%0.3i' %(a+1))
         #mce_file2 = os.path.exists(dir2 + 'temp.%0.3i' %(a+1))
         #if (mce_file1 and mce_file2):
@@ -44,17 +41,8 @@ def netcdfdata(rc,ch,row):
                 #mce,n,filestarttime,d1,d2,graphdata1,graphdata2 = readdata(f1,f2,mce_file1,mce_file2,mce,head1,head2,n,a,filestarttime,rc,ch,row)
                 print(colored('File Read: %s , %s' %(mce_file1.replace(dir,''),mce_file2.replace(dir,''))),'yellow')
                 a = a + 1
-            begin = dt.datetime.utcnow()
-        end = dt.datetime.utcnow()
-    else :
-        print(colored('No more files!', 'red'))
-        #subprocess.Popen(['pkill -9 -f readteledata.py'],shell=True)
-        #subprocess.Popen(['ssh -T pilot2@timemce.rit.edu pkill -9 -f tel_sock.py'],shell=True)
-        #subprocess.Popen(['/home/pilot1/anaconda3/bin/python /home/pilot1/TIME_Software/stop_server.py'],shell=True)
-        #print('Tel Server Stopped')
-        #subprocess.Popen(['ssh -T pilot2@timemce.rit.edu /home/pilot2/anaconda3/bin/python /home/pilot2/TIME_Software/stop_client.py'],shell=True)
-        #print('Tel Client Stopped')
-        sys.exit()
+        else :
+            break
     print(colored(graphdata1,'red'))
     return d1, graphdata1, mce
     #return d1, d2, graphdata1, graphdata2, mce

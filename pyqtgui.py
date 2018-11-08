@@ -7,6 +7,7 @@ import random as rm
 import netcdf as nc
 import settings as st
 from termcolor import colored
+import time
 
 sys.stdout = os.fdopen(sys.stdout.fileno(),'w',1) #line buffering
 sys.path.append('/data/cryo/current_data')
@@ -114,7 +115,7 @@ class mcegui(QtGui.QWidget):
             subprocess.Popen(['rm /home/pilot1/Desktop/time-data/mce2/temp.*'], shell=True)
 
         #self.runtele.terminate()
-        self.runnetcdf.terminate()
+        #self.runnetcdf.terminate()
         subprocess.Popen(['./mce1_stop_sftp.sh'], shell=True)
         #subprocess.Popen(['./mce0_stop_sftp.sh'], shell=True)
 
@@ -504,8 +505,6 @@ class mcegui(QtGui.QWidget):
         print("Num of files",self.n_files)
         #----------------------------------------------------------------------------------
         # start the mce1 file system check (rit mce)
-        subprocess.Popen(['ssh -T pilot2@timemce.rit.edu python /home/pilot2/TIME_Software/mce1_sftp.py'],shell=True)
-        print(colored('RIT MCE Started'),'green')
 
         #----------------------------------------------------------------------------------
         # start the mce2 file system check (caltech mce)
@@ -534,16 +533,22 @@ class mcegui(QtGui.QWidget):
             #subprocess.Popen(["./mce0_cdm.sh %s %s" % (self.readoutcard, self.datamode)], shell=True)
             #subprocess.Popen(["./mce0_run.sh %s %s %s" %(self.framenumber, self.readoutcard, self.frameperfile)], shell=True)
 
+        subprocess.Popen(['ssh -T pilot2@timemce.rit.edu python /home/pilot2/TIME_Software/mce1_sftp.py'],shell=True)
+        print(colored('RIT MCE Started'),'green')
+
         #initialize time
         self.n_intervals = 1
         self.starttime = datetime.datetime.utcnow()
         self.totaltimeinterval = int(self.timeinterval)
 
         self.mce = 1
-        self.runnetcdf = subprocess.Popen(['python read_files.py %s' % (self.n_files)], shell=True)
+        #self.runnetcdf = subprocess.Popen(['python read_files.py %s' % (self.n_files)], shell=True)
+        subprocess.Popen(['python /home/pilot1/TIME_Software/read_files.py'], shell=True)
 
         if self.readoutcard == 'All':
-            self.z1, self.z2, self.graphdata1, self.graphdata2, self.mce = rf.netcdfdata(self.currentreadoutcard, self.currentchannel, self.row)
+            # self.z1, self.z2, self.graphdata1, self.graphdata2, self.mce = rf.netcdfdata(self.currentreadoutcard, self.currentchannel, self.row)
+            print(colored('init plot is trying to start read_files','red'))
+            self.z1, self.graphdata1, self.mce = rf.netcdfdata(self.currentreadoutcard, self.currentchannel, self.row)
 
         #initalize data list
         ''' What is this for? '''
@@ -575,7 +580,6 @@ class mcegui(QtGui.QWidget):
         self.updateplot()
 
         #timer for updating graph
-        ''' maybe it's calling moveplot too quickly before data is ready? '''
         self.timer = pg.QtCore.QTimer()
         self.timer.timeout.connect(self.moveplot)
         self.timer.start(1000)
