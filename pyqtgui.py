@@ -536,10 +536,9 @@ class mcegui(QtGui.QWidget):
         else:
             subprocess.Popen(["./mce1_cdm.sh %s %s" % (self.readoutcard, self.datamode)], shell=True)
             subprocess.Popen(["./mce1_run.sh %s %s %s" %(self.framenumber, self.readoutcard, self.frameperfile)], shell=True)
-            print(colored('init plot is trying to start read_files','red'))
-            self.z1, self.graphdata1, self.mce = rf.netcdfdata(self.readoutcard, self.currentchannel, self.row)
             #subprocess.Popen(["./mce0_cdm.sh %s %s" % (self.readoutcard, self.datamode)], shell=True)
             #subprocess.Popen(["./mce0_run.sh %s %s %s" %(self.framenumber, self.readoutcard, self.frameperfile)], shell=True)
+            self.z1, self.graphdata1, self.mce = rf.netcdfdata(self.readoutcard, self.currentchannel, self.row)
 
         #initialize time
         self.n_intervals = 1
@@ -549,7 +548,7 @@ class mcegui(QtGui.QWidget):
         self.mce = 1
 
         #initalize data list
-        ''' What is this for? '''
+        ''' This is meant to store old data '''
         self.data = [0, 0, 0]
 
         #initialize graph GUI item
@@ -572,22 +571,19 @@ class mcegui(QtGui.QWidget):
         self.oldmcegraph.addItem(self.oldmcegraphdata)
 
         #call other init functions and begin updating graph
-        #self.initheatmap()
+        self.initheatmap()
         #self.initkmirrordata()
         #self.initfftgraph()
         self.updateplot()
 
         #timer for updating graph
-        '''It looks like this is what repeatedly calls moveplot(), which
-            repeatedly calls updateplot(). Meaning read_files.py shouldn't be
-            stuck in a loop for forever or it will never get to these things.'''
+        '''Processes just a single event and then stops'''
         self.timer = pg.QtCore.QTimer()
-        self.timer.timeout.connect(self.moveplot())
+        self.timer.timeout.connect(self.moveplot)
         self.timer.start(1000)
 
-    '''updates 'clock' (n_intervals) and re-calls read_files.py, also calls update functions'''
     def moveplot(self):
-        self.n_intervals+=int(1)
+        self.n_intervals += int(1)
 
         self.starttime = datetime.datetime.utcnow()
 
@@ -603,106 +599,155 @@ class mcegui(QtGui.QWidget):
     def updateplot(self):
         #determines number of updates needed based on how many tempfiles were read
         #graphdata1's length is based on the number of tempfiles read_files read
-    	for g in range(len(self.graphdata1)):
+    	#for g in range(len(self.graphdata1)):
             #take out data from graphdata1
-            self.graphdata = self.graphdata1[g]
-            a = self.graphdata[0]
-            ch = self.graphdata[1]
-            y = self.graphdata[2][:self.frameperfile]
-            self.y = y
-            #visual watchdog to make sure everything is in-sync with everything else
-            print('gui %s %s' % (self.n_intervals, a))
-            #creates x values for current time interval and colors points based
-            #on current channel
-            pointcolor = []
-            pointsymbol = []
-            x = []
-            for i in range(self.frameperfile):
-                #create x value
-                masterx = i / (self.frameperfile * 1.0)
-                x.append(self.n_intervals + masterx - 1)
-                #picks color based on current channel
-                if ch % 8 == 1:
-                    pointcolor.append(pg.mkBrush('b'))
-                elif ch % 8 == 2:
-                    pointcolor.append(pg.mkBrush('r'))
-                elif ch % 8 == 3:
-                    pointcolor.append(pg.mkBrush('g'))
-                elif ch % 8 == 4:
-                    pointcolor.append(pg.mkBrush('y'))
-                elif ch % 8 == 5:
-                    pointcolor.append(pg.mkBrush('c'))
-                elif ch % 8 == 6:
-                    pointcolor.append(pg.mkBrush('m'))
-                elif ch % 8 == 7:
-                    pointcolor.append(pg.mkBrush('k'))
-                elif ch % 8 == 0:
-                    pointcolor.append(pg.mkBrush('w'))
-                if self.readoutcard == 'All':
-                    if self.currentreadoutcard % 4 == 1:
-                        pointsymbol.append('o')
-                    elif self.currentreadoutcard % 4 == 2:
-                        pointsymbol.append('s')
-                    elif self.currentreadoutcard % 4 == 3:
-                        pointsymbol.append('t')
-                    elif self.currentreadoutcard % 4 == 0:
-                        pointsymbol.append('d')
-            self.x = x
-            #initializes old data list on either the first update or the first one after
-            #the current total time interval, otherwise adds to current list
-            if self.n_intervals == 1 or self.n_intervals % self.totaltimeinterval == 2:
-                self.data[0] = x
-                self.data[1] = y
+            #self.graphdata = self.graphdata1[g]
+        a = self.graphdata1[0]
+        ch = self.graphdata1[1]
+        y = self.graphdata1[2][:self.frameperfile]
+        self.y = y
+        #visual watchdog to make sure everything is in-sync with everything else
+        print('gui , n_intervals:%s , a:%s' % (self.n_intervals, a))
+
+        #creates x values for current time interval and colors points based on current channel ===
+        pointcolor = []
+        pointsymbol = []
+        x = []
+        ''' Need a way to make end of time array be the actual amount of time it
+            took to create that file '''
+        #x = np.linspace(self.n_intervals,self.n_intervals + 1,self.frameperfile)
+        ''' I think he's just making an array that will fill x with the same
+            number of points that are in y, there are way easier ways to do this... '''
+        for i in range(self.frameperfile):
+            masterx = i / (self.frameperfile * 1.0)
+            #x.append(self.n_intervals + masterx - 1)
+            x.append(self.n_intervals + masterx)
+        self.x = x
+        # =====================================================================================
+        #picks color based on current channel =============================================
+        # if ch % 8 == 1:
+        if ch == 1 :
+            #pointcolor.append(pg.mkBrush('b'))
+            pointcolor.extend([pg.mkBrush('b') for i in range(self.frameperfile)])
+        elif ch == 2 :
+            # pointcolor.append(pg.mkBrush('r'))
+            pointcolor.extend([pg.mkBrush('r') for i in range(self.frameperfile)])
+        elif ch == 3 :
+            # pointcolor.append(pg.mkBrush('g'))
+            pointcolor.extend([pg.mkBrush('g') for i in range(self.frameperfile)])
+        elif ch == 4 :
+            # pointcolor.append(pg.mkBrush('y'))
+            pointcolor.extend([pg.mkBrush('y') for i in range(self.frameperfile)])
+        elif ch == 5 :
+            # pointcolor.append(pg.mkBrush('c'))
+            pointcolor.extend([pg.mkBrush('c') for i in range(self.frameperfile)])
+        elif ch == 6 :
+            # pointcolor.append(pg.mkBrush('m'))
+            pointcolor.extend([pg.mkBrush('m') for i in range(self.frameperfile)])
+        elif ch == 7 :
+            # pointcolor.append(pg.mkBrush('k'))
+            pointcolor.extend([pg.mkBrush('k') for i in range(self.frameperfile)])
+        else :
+            # pointcolor.append(pg.mkBrush('w'))
+            pointcolor.extend([pg.mkBrush('w') for i in range(self.frameperfile)])
+        # =================================================================================================================
+        # changes symbols for viewing different RC cards on same plot =====================
+        if self.readoutcard == 'All':
+            # if self.currentreadoutcard % 4 == 1:
+            if self.currentreadoutcard == 1:
+                pointsymbol.append('o')
+            elif self.currentreadoutcard == 2:
+                pointsymbol.append('s')
+            elif self.currentreadoutcard == 3:
+                pointsymbol.append('t')
+            elif self.currentreadoutcard == 0:
+                pointsymbol.append('d')
+        else :
+            pass
+        #============================================================================================================
+        #creates graphdata item on first update
+        if self.n_intervals == 1:
+            print(colored('Triggered first if statement','red'))
+            self.mcegraph.addItem(self.mcegraphdata)
+            self.mcegraph.setXRange(self.n_intervals - 1, self.n_intervals + self.totaltimeinterval - 1, padding=0)
+            if self.readoutcard == 'All':
+                self.mcegraphdata.setData(x, y, brush=pointcolor, symbol=pointsymbol)
             else:
-                self.data[0].extend(x)
-                self.data[1].extend(y)
-            #recasts x, y as arrays for updating the graph data
+                self.mcegraphdata.setData(x, y, brush=pointcolor)
+            self.oldch = ch
+            # updates oldgraph data
+            self.data[0] = x
+            self.data[1] = y
+            # recasts for plotting
             x = np.asarray(x)
             y = np.asarray(y)
-            #creates graphdata item on first update
-            if self.n_intervals == 1:
-                self.mcegraph.addItem(self.mcegraphdata)
-                self.mcegraph.setXRange(self.n_intervals - 1, self.n_intervals + self.totaltimeinterval - 1, padding=0)
-                if self.readoutcard == 'All':
-                    self.mcegraphdata.setData(x, y, brush=pointcolor, symbol=pointsymbol)
-                else:
-                    self.mcegraphdata.setData(x, y, brush=pointcolor)
-                self.oldch = ch
-            #clears graphdata and updates old graph after the total time interval
-            #has passed
-            elif self.n_intervals % self.totaltimeinterval == 1:
-                self.oldmcegraph.setXRange(self.data[0][0], self.data[0][-1], padding=0)
-                self.oldmcegraphdata.setData(self.data[0], self.data[1])
-                self.mcegraphdata.clear()
-                self.mcegraph.setXRange(self.n_intervals - 1, self.n_intervals + self.totaltimeinterval - 1, padding=0)
-                if self.readoutcard == 'All':
-                    self.mcegraphdata.setData(x, y, brush=pointcolor, symbol=pointsymbol)
-                else:
-                    self.mcegraphdata.setData(x, y, brush=pointcolor)
-                self.data = [0, 0, 0]
-            #updates graph, if channel delete is set to yes will clear data first
+        # ===========================================================================================================
+        #clears graphdata and updates old graph after the total time interval has passed
+        elif self.n_intervals == self.totaltimeinterval :
+            print(colored('Triggered elif statement','red'))
+            self.oldmcegraph.setXRange(self.data[0][0], self.data[0][-1], padding=0)
+            self.oldmcegraphdata.setData(self.data[0], self.data[1])
+            self.mcegraphdata.clear()
+            self.mcegraph.setXRange(self.n_intervals - 1, self.n_intervals + self.totaltimeinterval - 1, padding=0)
+            if self.readoutcard == 'All':
+                self.mcegraphdata.setData(x, y, brush=pointcolor, symbol=pointsymbol)
             else:
-                if self.channeldelete == 'Yes' and self.oldch != ch:
-                    self.mcegraphdata.clear()
-                    if self.readoutcard == 'All':
-                        self.mcegraphdata.setData(x, y, brush=pointcolor, symbol=pointsymbol)
-                    else:
-                        self.mcegraphdata.setData(x, y, brush=pointcolor)
+                self.mcegraphdata.setData(x, y, brush=pointcolor)
+            self.data = [0, 0, 0]
+            # updates oldgraphdata after total time interval is reached
+            self.data[0] = x
+            self.data[1] = y
+            # recasts for plotting
+            x = np.asarray(x)
+            y = np.asarray(y)
+        # ==============================================================================================================
+        #updates graph, if channel delete is set to yes will clear data first
+        else:
+            print(colored('Triggered else statement','red'))
+            if self.channeldelete == 'Yes' and self.oldch != ch:
+                self.mcegraphdata.clear()
+                if self.readoutcard == 'All':
+                    self.mcegraphdata.setData(x, y, brush=pointcolor, symbol=pointsymbol)
                 else:
-                    if self.readoutcard == 'All':
-                        self.mcegraphdata.addPoints(x, y, brush=pointcolor, symbol=pointsymbol)
-                    else:
-                        self.mcegraphdata.addPoints(x, y, brush=pointcolor)
-            self.oldch = ch
-            #watchdog for time to update graph/heatmap/K-mirror data
-            self.endtime = datetime.datetime.utcnow()
-            self.timetaken = self.endtime - self.starttime
-            #if updating multiple intervals, add to n_intervals to keep time in-sync
-            if len(self.graphdata1) > 1 and g != len(self.graphdata1) - 1:
-                self.n_intervals += 1
-            print('Time taken: %s' % (self.timetaken))
+                    self.mcegraphdata.setData(x, y, brush=pointcolor)
+            else:
+                if self.readoutcard == 'All':
+                    self.mcegraphdata.addPoints(x, y, brush=pointcolor, symbol=pointsymbol)
+                else:
+                    self.mcegraphdata.addPoints(x, y, brush=pointcolor)
+            # updates old data for when graph resets
+            self.data[0].extend(x) # doesn't create a new array but adds to existing
+            self.data[1].extend(y)
+        # =================================================================================================================
+        self.oldch = ch
+        #watchdog for time to update graph/heatmap/K-mirror data
+        self.endtime = datetime.datetime.utcnow()
+        self.timetaken = self.endtime - self.starttime
+        print('Time taken: %s' % (self.timetaken))
 
-    #initialize heatmap
+        ''' Some weirdness that Jake did... '''
+        #if updating multiple intervals, add to n_intervals to keep time in-sync
+        # if len(self.graphdata1) > 1 and g != len(self.graphdata1) - 1:
+        ''' My solution ... '''
+        # in the case that we read more than one file in at once...
+        if len(self.graphdata1) > self.frameperfile :
+            self.n_intervals += 1
+        # =================================================================================================================
+        #initializes old data list on either the first update or the first one after
+        #the current total time interval, otherwise adds to current list
+        '''
+        if self.n_intervals == 1 or self.n_intervals % self.totaltimeinterval == 2:
+            self.data[0] = x
+            self.data[1] = y
+        else:
+            self.data[0].extend(x) # doesn't create a new array but adds to existing
+            self.data[1].extend(y)
+        #recasts x, y as arrays for updating the graph data
+        x = np.asarray(x)
+        y = np.asarray(y)
+        '''
+        # ====================================================================================================================
+
     def initheatmap(self):
         #casts z as array for creating heatmap
         z1 = np.asarray(self.z1)
@@ -730,7 +775,6 @@ class mcegui(QtGui.QWidget):
         #     self.heatmap.setLevels(100, 190)
         self.grid.addWidget(self.heatmap, 3, 2, 2, 3)
 
-    #updates heatmap
     def updateheatmap(self):
         #casts z as array for creating heatmap
         z1 = np.asarray(self.z1)

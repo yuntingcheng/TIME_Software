@@ -7,7 +7,7 @@ from termcolor import colored
 
 sys.path.append('/home/pilot1/TIME_Software')
 def netcdfdata(rc,ch,row):
-    print('Read files has started')
+    #print('Read files has started')
     sys.stdout.flush()
     a = 0
     mce = 0
@@ -22,13 +22,13 @@ def netcdfdata(rc,ch,row):
         #if (mce_file1 and mce_file2):
         if mce_file1 :
             files1 = [dir1 + x for x in os.listdir(dir1) if (x.startswith("temp") and not x.endswith('.run'))]
-            print(colored('First if statement passed'))
+            #print(colored('First if statement passed'))
             sys.stdout.flush()
             #files2 = [dir2 + x for x in os.listdir(dir2) if (x.startswith("temp") and not x.endswith('.run'))]
             # if (len(files1) and len(files2)) != 0:
             if len(files1) != 0:
                 mce_file1 = min(files1, key = os.path.getctime)
-                print(colored('Second if statement passed'))
+                #print(colored('Second if statement passed'))
                 sys.stdout.flush()
                 #mce_file2 = min(files2, key = os.path.getctime)
                 f1 = mce_data.SmallMCEFile(mce_file1)
@@ -54,7 +54,6 @@ def netcdfdata(rc,ch,row):
             break
         else :
             pass
-    print(colored(graphdata1,'red'))
     return d1, graphdata1, mce
     #return d1, d2, graphdata1, graphdata2, mce
 # ===========================================================================================================================
@@ -87,7 +86,7 @@ def readdata(f1, mce_file1, mce, head1, n, a, filestarttime, rc, ch, row):
     if n == 0:
         filestarttime = dt.datetime.utcnow()
         filestarttime = filestarttime.isoformat()
-        print('------------ New File -------------')
+        print(colored('------------ New File -------------','green'))
         #mce = nc.new_file(h1.shape, head1, head2, filestarttime)
         mce = nc.new_file(h1.shape, head1, filestarttime)
         if rc == 's' :
@@ -99,7 +98,7 @@ def readdata(f1, mce_file1, mce, head1, n, a, filestarttime, rc, ch, row):
 
     elif os.stat(netcdfdir + "/raw_%s.nc" % (filestarttime)).st_size >= 20 * 10**6:
         n = 0
-        print('----------- New File ------------')
+        print(colored('----------- New File ------------','green'))
         filestarttime = datetime.datetime.utcnow()
         filestarttime = filestarttime.isoformat()
         #mce = nc.new_file(h1.shape, head1, head2, filestarttime)
