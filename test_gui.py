@@ -439,7 +439,7 @@ class mcegui(QtGui.QWidget):
             #self.hkwarning.buttonClicked.connect(self.on_warningbutton_clicked)
             self.hkwarning.exec_()
 
-''' for linux distro only ... '''
+    ''' for linux distro only ... '''
     def file_checker(self) :
         import inotify.adapters
         import os
