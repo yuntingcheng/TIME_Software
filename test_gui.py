@@ -137,9 +137,9 @@ class mcegui(QtGui.QWidget):
             # initialize child processes and create plots
             self.a = Manager().Value('i', 0)
             new_files = mp.Process(target = self.file_checker, daemon = True)
-            move_files = mp.Process(target = self.file_transfer, daemon = True)
+            #move_files = mp.Process(target = self.file_transfer, daemon = True)
             new_files.start()
-            move_files.start()
+            #move_files.start()
             self.initplot()
 
     #resets parameter variables after warning box is read
@@ -440,20 +440,31 @@ class mcegui(QtGui.QWidget):
             self.hkwarning.exec_()
 
     ''' for linux distro only ... '''
+    # def file_checker(self) :
+    #     import inotify.adapters
+    #     import os
+    #     notifier = inotify.adapters.Inotify()
+    #     notifier.add_watch('/home/pilot1/test_mce_file_final')
+    #     for event in notifier.event_gen():
+    #         if self.a == 0 :
+    #             self.z1, self.graphdata1, self.mce = rf.netcdfdata(self.a, self.readoutcard, self.currentchannel, self.row)
+    #         else :
+    #             if event is not None:
+    #                 if 'IN_CREATE' in event[1]:
+    #                     self.a += 1
+    #                     self.z1, self.graphdata1 = rf.netcdfdata(self.a, self.readoutcard, self.currentchannel, self.row)
+    #     self.updateplot()
+
     def file_checker(self) :
-        import inotify.adapters
-        import os
-        notifier = inotify.adapters.Inotify()
-        notifier.add_watch('/Users/vlb9398/Desktop/')
-        for event in notifier.event_gen():
+        dir = '/home/pilot1/test_mce_file/test_mce_files'
+        if os.path.exists(dir + 'test_data.%0.3i' %(int(self.a.value))) :
             if self.a == 0 :
                 self.z1, self.graphdata1, self.mce = rf.netcdfdata(self.a, self.readoutcard, self.currentchannel, self.row)
             else :
-                if event is not None:
-                    if 'IN_CREATE' in event[1]:
-                        self.a += 1
-                        self.z1, self.graphdata1 = rf.netcdfdata(self.a, self.readoutcard, self.currentchannel, self.row)
+                self.a += 1
+                self.z1, self.graphdata1 = rf.netcdfdata(self.a, self.readoutcard, self.currentchannel, self.row)
         self.updateplot()
+        time.sleep(1.0)
 
 #calls mcegui class to start GUI
 def main():
