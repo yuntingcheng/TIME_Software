@@ -2,7 +2,7 @@ from pyqtgraph import QtCore, QtGui
 import numpy as np
 import sys, os, subprocess, time, datetime, socket, struct, threading
 import pyqtgraph as pg
-import test_read_files as rf
+from test_read_files import Read_Files
 import random as rm
 import netcdf as nc
 import settings as st
@@ -34,6 +34,8 @@ class mcegui(QtGui.QWidget):
         self.currentchannel = 1
         self.row = 1
         self.oldch = 1
+        self.graphdata1 = []
+        self.z1 = 0
 
     #creates GUI window and calls functions to populate GUI
     def init_ui(self):
@@ -283,9 +285,8 @@ class mcegui(QtGui.QWidget):
 
     #writes and updates data to both live graph and old graph
     def updateplot(self):
-        a = self.graphdata1[0]
-        ch = self.graphdata1[1]
-        y = self.graphdata1[2][:self.frameperfile]
+        ch = self.graphdata1[0]
+        y = self.graphdata1[1][:self.frameperfile]
         self.y = y
 
         #creates x values for current time interval and colors points based on current channel ===
@@ -294,7 +295,7 @@ class mcegui(QtGui.QWidget):
         x = []
         ''' Need a way to make end of time array be the actual amount of time it
             took to create that file '''
-        x = np.linspace(self.a,self.a + 1,self.frameperfile)
+        x = np.linspace(self.a.value,self.a.value + 1,self.frameperfile)
         ''' I think he's just making an array that will fill x with the same
             number of points that are in y, there are way easier ways to do this... '''
         self.x = x
@@ -341,10 +342,10 @@ class mcegui(QtGui.QWidget):
             pass
         #============================================================================================================
         #creates graphdata item on first update
-        if self.a == 1:
+        if self.a.value == 0:
             print(colored('Triggered first if statement','red'))
             self.mcegraph.addItem(self.mcegraphdata)
-            self.mcegraph.setXRange(self.a - 1, self.a + self.totaltimeinterval - 1, padding=0)
+            self.mcegraph.setXRange(self.a.value - 1, self.a.value + self.totaltimeinterval - 1, padding=0)
             if self.readoutcard == 'All':
                 self.mcegraphdata.setData(x, y, brush=pointcolor, symbol=pointsymbol)
             else:
@@ -358,12 +359,12 @@ class mcegui(QtGui.QWidget):
             y = np.asarray(y)
         # ===========================================================================================================
         #clears graphdata and updates old graph after the total time interval has passed
-        elif self.a == self.totaltimeinterval :
+        elif self.a.value == self.totaltimeinterval :
             print(colored('Triggered elif statement','red'))
             self.oldmcegraph.setXRange(self.data[0][0], self.data[0][-1], padding=0)
             self.oldmcegraphdata.setData(self.data[0], self.data[1])
             self.mcegraphdata.clear()
-            self.mcegraph.setXRange(self.a - 1, self.a + self.totaltimeinterval - 1, padding=0)
+            self.mcegraph.setXRange(self.a.value - 1, self.a.value + self.totaltimeinterval - 1, padding=0)
             if self.readoutcard == 'All':
                 self.mcegraphdata.setData(x, y, brush=pointcolor, symbol=pointsymbol)
             else:
@@ -403,7 +404,7 @@ class mcegui(QtGui.QWidget):
         #initializes old data list on either the first update or the first one after
         #the current total time interval, otherwise adds to current list
 
-        if self.a == 1 or self.a % self.totaltimeinterval == 2:
+        if self.a.value == 1 or self.a.value % self.totaltimeinterval == 2:
             self.data[0] = x
             self.data[1] = y
         else:
@@ -456,13 +457,14 @@ class mcegui(QtGui.QWidget):
     #     self.updateplot()
 
     def file_checker(self) :
-        dir = '/home/pilot1/test_mce_file/test_mce_files'
+        dir = '/Users/vlb9398/Desktop/test_mce_files/'
         if os.path.exists(dir + 'test_data.%0.3i' %(int(self.a.value))) :
-            if self.a == 0 :
-                self.z1, self.graphdata1, self.mce = rf.netcdfdata(self.a, self.readoutcard, self.currentchannel, self.row)
-            else :
-                self.a += 1
-                self.z1, self.graphdata1 = rf.netcdfdata(self.a, self.readoutcard, self.currentchannel, self.row)
+            print(colored(self.a.value,'red'))
+            rf = Read_Files(self.a.value, self.readoutcard, self.currentchannel, self.row)
+            self.z1, self.graphdata1 = rf.netcdfdata()
+            self.a.value += 1
+        else :
+            print(colored('No Matching Files','red'))
         self.updateplot()
         time.sleep(1.0)
 
