@@ -577,7 +577,6 @@ class mcegui(QtGui.QWidget):
         self.updateplot()
 
         #timer for updating graph
-        '''Processes just a single event and then stops'''
         self.timer = pg.QtCore.QTimer()
         self.timer.timeout.connect(self.moveplot)
         self.timer.start(1000)

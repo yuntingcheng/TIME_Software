@@ -2,7 +2,7 @@ from pyqtgraph import QtCore, QtGui
 import numpy as np
 import sys, os, subprocess, time, datetime, socket, struct, threading
 import pyqtgraph as pg
-from test_read_files import Read_Files
+from test_read_files import fc
 import random as rm
 import netcdf as nc
 import settings as st
@@ -12,7 +12,6 @@ import multiprocessing as mp
 from multiprocessing import Process, Manager
 
 sys.stdout = os.fdopen(sys.stdout.fileno(),'w',1) #line buffering
-
 #class of all components of GUI
 class mcegui(QtGui.QWidget):
     #initializes mcegui class and calls other init functions
@@ -29,7 +28,7 @@ class mcegui(QtGui.QWidget):
         self.datamode = ''
         self.readoutcard = ''
         self.framenumber = ''
-        self.frameperfile = 100
+        self.frameperfile = 374
         self.totaltimeinterval = 120
         self.currentchannel = 1
         self.row = 1
@@ -61,6 +60,8 @@ class mcegui(QtGui.QWidget):
         #stop mce with subprocess
         if self.showmcedata == 'Yes':
             ''' have something that stops reading data files '''
+        self.runner_thread.quit()
+        self.runner_thread.wait()
         sys.exit()
 
     #sets parameter variables to user input and checks if valid - will start MCE
@@ -128,7 +129,7 @@ class mcegui(QtGui.QWidget):
 
             self.channelselection()
             print(colored('Time Started: %s' % (self.timestarted),'magenta'))
-            self.frameperfile = int((50 * 10 ** 6) / (33 * 90 * int(self.datarate))) #calculation taken from UBC MCE Wiki
+            self.p = int((50 * 10 ** 6) / (33 * 90 * int(self.datarate))) #calculation taken from UBC MCE Wiki
             print(colored('Frame per file: %s' % (self.frameperfile),'magenta'))
 
             # prevents user from re-activating everything
@@ -136,12 +137,7 @@ class mcegui(QtGui.QWidget):
 
             print(colored('Readout Card : %s' %(self.readoutcard),'magenta'))
 
-            # initialize child processes and create plots
-            self.a = Manager().Value('i', 0)
-            new_files = mp.Process(target = self.file_checker, daemon = True)
-            #move_files = mp.Process(target = self.file_transfer, daemon = True)
-            new_files.start()
-            #move_files.start()
+            #start other plot making processes
             self.initplot()
 
     #resets parameter variables after warning box is read
@@ -252,11 +248,12 @@ class mcegui(QtGui.QWidget):
     	self.currentreadoutcardtext.setText('Current Readout Card: %s' % (self.currentreadoutcarddisplay))
             #self.currentreadoutcarddisplay = self.readoutcardselect.currentText()
 
-    #initializes graph for live viewing of data
     def initplot(self):
+        #initialize graph objects
         #initialize time
         self.starttime = datetime.datetime.utcnow()
-        self.totaltimeinterval = int(self.timeinterval)
+        ''' This was causing the graph to clear before it even started going'''
+        #self.totaltimeinterval = int(self.timeinterval)
 
         self.mce = 1
 
@@ -265,8 +262,10 @@ class mcegui(QtGui.QWidget):
         self.data = [0, 0, 0]
 
         #initialize graph GUI item
+        print(colored('mcegraphdata is initialized','red'))
         self.mcegraphdata = pg.ScatterPlotItem()
         self.mcegraph = pg.PlotWidget()
+        print(colored('MCEGRAPH has been made','magenta'))
         self.grid.addWidget(self.mcegraph, 1, 5, 2, 3)
 
         #add labels to graph
@@ -283,8 +282,39 @@ class mcegui(QtGui.QWidget):
         self.oldmcegraph.setTitle('Old MCE TIME Data')
         self.oldmcegraph.addItem(self.oldmcegraphdata)
 
-    #writes and updates data to both live graph and old graph
-    def updateplot(self):
+        # self.updateplot()
+        # self.wThread = QtCore.QThread()
+        # self.wObject = File_Checker()
+        # self.wObject.moveToThread(wThread)
+        # self.wThread.started.connect(wObject.fc)
+        # self.wObject.finished.connect(wThread.quit)
+        # self.wObject.update.connect(self.moveplot)
+
+        self.runner_thread = QtCore.QThread()
+        self.runner = File_Checker(start_signal=self.runner_thread.started)
+        self.runner.msg_from_job.connect(self.moveplot)
+        self.runner.moveToThread(self.runner_thread)
+        self.runner_thread.start()
+
+    def moveplot(self,update):
+        h1 = update[1]
+        d1 = np.empty([h1.shape[0],h1.shape[1]],dtype=float)
+        for b in range(h1.shape[0]):
+            for c in range(h1.shape[1]):
+                d1[b][c] = (np.std(h1[b][c][:],dtype=float))
+        g1 = h1[:,self.ch - 1]
+        array1 = []
+        for j in range(g1.shape[1]):
+            array1.append(g1[self.row - 1][j])
+        self.graphdata1 = [self.ch,array1]
+        self.update_plot(update[0])
+
+    def updateplot(self,a):
+
+        self.starttime = datetime.datetime.utcnow()
+        print(colored(self.graphdata1[0],'green'))
+
+        # ============================================================================================
         ch = self.graphdata1[0]
         y = self.graphdata1[1][:self.frameperfile]
         self.y = y
@@ -295,9 +325,10 @@ class mcegui(QtGui.QWidget):
         x = []
         ''' Need a way to make end of time array be the actual amount of time it
             took to create that file '''
-        x = np.linspace(self.a.value,self.a.value + 1,self.frameperfile)
-        ''' I think he's just making an array that will fill x with the same
-            number of points that are in y, there are way easier ways to do this... '''
+        self.endtime = datetime.datetime.utcnow()
+        self.timetaken = self.endtime - self.starttime
+        print(colored('Time taken: %s' % (self.timetaken.total_seconds()),'green'))
+        x = np.linspace(a,a + self.timetaken.total_seconds(),self.frameperfile)
         self.x = x
         # =====================================================================================
         #picks color based on current channel =============================================
@@ -341,11 +372,27 @@ class mcegui(QtGui.QWidget):
         else :
             pass
         #============================================================================================================
+        ''' Below is code that I think is already implemented in the three conditional
+            statements if, elif and else. Can add back in if necessary.'''
+        #initializes old data list on either the first update or the first one after
+        #the current total time interval, otherwise adds to current list
+        # if a == 0 or a % self.totaltimeinterval == 2:
+        #     self.data[0] = x
+        #     self.data[1] = y
+        # else:
+        #     self.data[0].extend(x) # doesn't create a new array but adds to existing
+        #     self.data[1].extend(y)
+        # #recasts x, y as arrays for updating the graph data
+        # x = np.asarray(x)
+        # y = np.asarray(y)
+        #====================================================================================================
         #creates graphdata item on first update
-        if self.a.value == 0:
+        if a == 0:
+            self.data[0] = x
+            self.data[1] = y
             print(colored('Triggered first if statement','red'))
             self.mcegraph.addItem(self.mcegraphdata)
-            self.mcegraph.setXRange(self.a.value - 1, self.a.value + self.totaltimeinterval - 1, padding=0)
+            self.mcegraph.setXRange(a - 1, a + self.totaltimeinterval - 1, padding=0)
             if self.readoutcard == 'All':
                 self.mcegraphdata.setData(x, y, brush=pointcolor, symbol=pointsymbol)
             else:
@@ -355,16 +402,19 @@ class mcegui(QtGui.QWidget):
             self.data[0] = x
             self.data[1] = y
             # recasts for plotting
-            x = np.asarray(x)
-            y = np.asarray(y)
+            ''' extend doesn't like numpy arrays'''
+            # x = np.asarray(x)
+            # y = np.asarray(y)
         # ===========================================================================================================
         #clears graphdata and updates old graph after the total time interval has passed
-        elif self.a.value == self.totaltimeinterval :
+        elif a == self.totaltimeinterval :
+            self.data[0] = x
+            self.data[1] = y
             print(colored('Triggered elif statement','red'))
             self.oldmcegraph.setXRange(self.data[0][0], self.data[0][-1], padding=0)
             self.oldmcegraphdata.setData(self.data[0], self.data[1])
             self.mcegraphdata.clear()
-            self.mcegraph.setXRange(self.a.value - 1, self.a.value + self.totaltimeinterval - 1, padding=0)
+            self.mcegraph.setXRange(a - 1, a + self.totaltimeinterval - 1, padding=0)
             if self.readoutcard == 'All':
                 self.mcegraphdata.setData(x, y, brush=pointcolor, symbol=pointsymbol)
             else:
@@ -374,8 +424,9 @@ class mcegui(QtGui.QWidget):
             self.data[0] = x
             self.data[1] = y
             # recasts for plotting
-            x = np.asarray(x)
-            y = np.asarray(y)
+            ''' extend doesn't like numpy arrays'''
+            # x = np.asarray(x)
+            # y = np.asarray(y)
         # ==============================================================================================================
         #updates graph, if channel delete is set to yes will clear data first
         else:
@@ -396,23 +447,7 @@ class mcegui(QtGui.QWidget):
             self.data[1].extend(y)
         # =================================================================================================================
         self.oldch = ch
-        #watchdog for time to update graph/heatmap/K-mirror data
-        self.endtime = datetime.datetime.utcnow()
-        self.timetaken = self.endtime - self.starttime
-        print('Time taken: %s' % (self.timetaken))
         # =================================================================================================================
-        #initializes old data list on either the first update or the first one after
-        #the current total time interval, otherwise adds to current list
-
-        if self.a.value == 1 or self.a.value % self.totaltimeinterval == 2:
-            self.data[0] = x
-            self.data[1] = y
-        else:
-            self.data[0].extend(x) # doesn't create a new array but adds to existing
-            self.data[1].extend(y)
-        #recasts x, y as arrays for updating the graph data
-        x = np.asarray(x)
-        y = np.asarray(y)
 
     def warningbox(self,message):
         if message == 'KMS' :
@@ -447,26 +482,35 @@ class mcegui(QtGui.QWidget):
     #     notifier = inotify.adapters.Inotify()
     #     notifier.add_watch('/home/pilot1/test_mce_file_final')
     #     for event in notifier.event_gen():
-    #         if self.a == 0 :
-    #             self.z1, self.graphdata1, self.mce = rf.netcdfdata(self.a, self.readoutcard, self.currentchannel, self.row)
+    #         if a == 0 :
+    #             self.z1, self.graphdata1, self.mce = rf.netcdfdata(a, self.readoutcard, self.currentchannel, self.row)
     #         else :
     #             if event is not None:
     #                 if 'IN_CREATE' in event[1]:
-    #                     self.a += 1
-    #                     self.z1, self.graphdata1 = rf.netcdfdata(self.a, self.readoutcard, self.currentchannel, self.row)
+    #                     Time_Keeper().plus_one()
+    #                     self.z1, self.graphdata1 = rf.netcdfdata(a, self.readoutcard, self.currentchannel, self.row)
     #     self.updateplot()
 
-    def file_checker(self) :
-        dir = '/Users/vlb9398/Desktop/test_mce_files/'
-        if os.path.exists(dir + 'test_data.%0.3i' %(int(self.a.value))) :
-            print(colored(self.a.value,'red'))
-            rf = Read_Files(self.a.value, self.readoutcard, self.currentchannel, self.row)
-            self.z1, self.graphdata1 = rf.netcdfdata()
-            self.a.value += 1
-        else :
-            print(colored('No Matching Files','red'))
-        self.updateplot()
-        time.sleep(1.0)
+# watches for new files in a directory and updates plots
+class File_Checker(QtCore.QObject):
+    update = QtCore.pyqtSignal()
+
+    def __init__(self, start_signal):
+        super(File_Checker,self).__init__()
+        start_signal.connect(self._run)
+        self.msg_from_job = None
+
+    def _run(self):
+        queue = mp.Queue()
+        p = mp.Process(target=fc, args=(queue))
+        p.start()
+        while True:
+            update = queue.get()
+            self.msg_from_job.emit(update)
+            if update == 'done':
+                break
+
+#gets updated by the file checker everytime there is a new file read
 
 #calls mcegui class to start GUI
 def main():
