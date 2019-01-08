@@ -513,13 +513,13 @@ class mcegui(QtGui.QWidget):
         #----------------------------------------------------------------------------------
         # start the mce1 file system check (rit mce)
         sftp1 = ['sshpass -p "time-pilot2" ssh -o StrictHostKeyChecking=no\
-            pilot2@timemce.rit.edu ; python /Desktop/mce1_sftp.py]
+            pilot2@timemce.rit.edu ; python /Desktop/mce1_sftp.py']
         process = subprocess.Popen(sftp1,stdout=subprocess.PIPE, shell=True)
         proc_stdout = process.communicate()[0].strip()
         #----------------------------------------------------------------------------------
         # start the mce2 file system check (caltech mce)
         sftp2 = ['sshpass -p "CII@zof7" ssh -o StrictHostKeyChecking=no\
-            time@time-mce-0.caltech.edu ; python /Desktop/mce2_sftp.py]
+            time@time-mce-0.caltech.edu ; python /Desktop/mce2_sftp.py']
         process = subprocess.Popen(sftp2,stdout=subprocess.PIPE, shell=True)
         proc_stdout = process.communicate()[0].strip()
         #----------------------------------------------------------------------------------
@@ -799,6 +799,8 @@ def main():
     ex = mcegui()
     sys.exit(app.exec_())
 
+
+#test connected to master
 
 if __name__ == '__main__':
     main()
